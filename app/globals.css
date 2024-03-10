@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --color-background: hsl(0, 0, 100%);
+    --color-foreground: hsl(20, 14.3%, 4.1%);
+
+    --color-card: var(--color-background);
+    --color-card-foreground: var(--color-foreground);
+ 
+    --color-popover: var(--color-background);
+    --color-popover-foreground: var(--color-foreground);
+ 
+    --color-primary: hsl(240, 3.7%, 15.88%);
+    --color-primary-foreground: hsl(60, 9.1%, 97.8%);
+ 
+    --color-secondary: hsl(240, 5.03%, 64.9%);
+    --color-secondary-foreground: var(--color-primary);
+ 
+    --color-muted: var(--color-secondary);
+    --color-muted-foreground: hsl(25, 5.3%, 44.7%);
+ 
+    --color-accent: var(--color-secondary);
+    --color-accent-foreground: var(--color-primary)
+ 
+    --color-destructive: hsl(0, 84.2%, 60.2%);
+    --color-destructive-foreground: var(--color-primary-foreground);
+
+    --color-border: hsl(210, 40%, 96.08%);
+    --color-input: hsl(20, 5.9%, 90%);
+    --color-ring: hsl(20, 14.3%, 4.1%);
+
+    --color-confirmed: hsl(161.38, 93.55%, 30.39%);
+    --color-pending: hsl(291.11, 93.1%, 82.94%);
+    --color-denied: hsl(293.41, 69.48%, 48.82%);
+
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --color-background: hsl(20, 14.3%, 4.1%);
+    --color-foreground: var(--color-primary-foreground)
+ 
+    --color-card: var(--color-background);
+    --color-card-foreground: var(--color-primary-foreground)
+ 
+    --color-popover: var(--color-background);
+    --color-popover-foreground: var(--color-primary-foreground)
+ 
+    --color-primary: var(--color-primary-foreground)
+    --color-primary-foreground: var(--color-primary)
+ 
+    --color-secondary: hsl(12, 6.5, 15.1);
+    --color-secondary-foreground: var(--color-primary-foreground)
+ 
+    --color-muted: var(--color-secondary)
+    --color-muted-foreground: hsl(24, 5.4, 63.9);
+ 
+    --color-accent: var(--color-secondary)
+    --color-accent-foreground: var(--color-primary-foreground)
+ 
+    --color-destructive: hsl(0, 62.8, 30.6);
+    --color-destructive-foreground: var(--color-primary-foreground)
+ 
+    --color-border: var(--color-secondary)
+    --color-input: var(--color-secondary)
+    --color-ring: hsl(24, 5.7, 82.9);
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
