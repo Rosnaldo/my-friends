@@ -1,14 +1,11 @@
 import React from "react";
 import GoogleButton from "./components/google-button";
-import { Card } from "@/components/ui/card";
 
 function Page() {
   return (
-    <div className="w-full h-full bg-black flex flex-col items-center justify-center">
-      <Card className="md:w-1/3 w-full">
-        <h1>Login</h1>
-        <GoogleButton text="Google" redirectTo="/main" />
-      </Card>
+    <div className="w-full h-screen flex flex-col justify-center p-8">
+      <h1 className="font-extrabold text-3xl lg:text-5xl text-primary">Login</h1>
+      <GoogleButton className="mt-4" text="Login with Google" redirectTo="/main" />
     </div>
   );
 }

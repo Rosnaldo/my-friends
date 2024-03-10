@@ -56,6 +56,9 @@ const config = {
         pending: "var(--color-pending)",
         denied: "var(--color-denied)",
       },
+      boxShadow: {
+        DEFAULT: "0 2px 4px 0 var(--color-shadow)",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

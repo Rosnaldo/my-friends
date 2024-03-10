@@ -22,7 +22,7 @@ function Page() {
   return (
     <div className="w-full h-full flex flex-col items-center">
       <div className="h-[50vh] w-full overflow-hidden">
-        <div className="relative w-[500px] h-[500px]">
+        <div className="relative aspect-square">
           <Image
             alt=""
             src="https://imgbr.imovelwebcdn.com/avisos/resize/2/29/74/42/36/01/1200x1200/3634422144.jpg"
@@ -35,7 +35,7 @@ function Page() {
           />
         </div>
       </div>
-      <div className="-translate-y-6 w-full rounded-t-3xl bg-white pt-[3vh] px-5">
+      <div className="absolute translate-y-[45vh] w-full rounded-t-3xl bg-white pt-[3vh] px-5">
         <h1 className="font-extrabold text-3xl lg:text-5xl text-primary">Skuhuvim House</h1>
         <div className="flex gap-2 items-center my-2">
           <PinMapIcon className="h-4 w-4 text-secondary" />
