@@ -6,7 +6,7 @@
 - containerized services. 
 - `keycloak` (manage user authentication, registration and sessions).
 - `API` protected by authentication middleware. 
-- 2 layers of `private networks`. 
+- `DB` only accessable via service. 
 - `nginx` redirects domain access to internal services. 
 - dockerfiles supports three environments: `local`, `development`, and `production`. 
 - frontends are provisioned by `cloudfront`. 
