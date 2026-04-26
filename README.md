@@ -20,7 +20,14 @@
 
 <br />
 
-## Keycloak as AIM
+## Keycloak as Identity and Access Management (IAM)
+- centralized authentication and session management.
+- easy implementation for SSO and external identity providers (Google, Github, ...etc).
+- division between (roles, groups, permissions, ..etc)
+- each service is a client with custom permissions.
+- frontend user login, registration and authentication is manage by keycloak.
+
+<br />
 
 ## API - backend
 <p>Each endpoint is protected by <strong>keycloak</strong> auth middleware.</p>
@@ -125,3 +132,8 @@ A monorepo was chosen to enable shared packages across multiple projects, making
 This setup is a key enabler for migrating legacy systems. It allows legacy and modern codebases to coexist within the same repository, while sharing common entities and contracts. 
 
 As a result, the system supports incremental or partial migration, where parts of the legacy code can be progressively replaced without breaking compatibility. Shared contracts ensure both old and new implementations remain aligned during the transition, reducing integration risk and improving long-term maintainability. 
+
+<br/>
+
+See more:  
+[Monorepo: The Missing Piece for a Successful Legacy Backend Migration to V2 (Node.js - Tsc)](monorepo.md)
