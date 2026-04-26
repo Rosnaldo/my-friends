@@ -1,5 +1,5 @@
 <picture>
-  <img src="wireframe.svg" width="50%">
+  <img src="assets/wireframe.png" width="70%">
 </picture>
 
 ## Architecture decisions
