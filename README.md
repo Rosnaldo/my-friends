@@ -20,10 +20,102 @@
 
 <br />
 
+## Keycloak as AIM
+
 ## API - backend
-- project lifecycle control. Non blocking dependencies loading for local environment and blocking promises for production environment. 
-- for testing, each test suite uses an in-memory MongoDB instance to ensure realistic query behavior without external dependencies. Entities are generated using customizable mocks with fake data, which can be overridden with specific fields. This approach makes it easy to reproduce very specific scenarios and focus only on the fields that matter. 
-- Tests validate each endpoint’s input and output using Zod schemas, and then assert that the declared TypeScript types are compatible with the runtime data structure. This is important because TypeScript types and actual runtime values are fundamentally different, and both need to be verified. 
+<p>Each endpoint is protected by <strong>keycloak</strong> auth middleware.</p>
+
+<details>
+  <summary>
+    <h3>Migration run scripts</h3>
+  </summary>
+    <p>
+      When project is loaded, migrations scripts are runned one by one in order.
+      It will skip the scripts already loaded on the <strong>collection migrations</strong>.
+      This way we make sure it wont run the same script twice.
+    </p>
+  <img src="assets/migration-run-scripts.png" width="500">
+</details>
+
+<details>
+  <summary>
+    <h3>Project lifecycle control</h3>
+    <p>
+      <strong>Non blocking dependencies loading</strong> for local environment and <strong>blocking promises</strong> for production environment.
+    </p>
+  </summary>
+    <p>
+      Routes, mongoDB collections and indexes will load different depends on the environment.
+      We don't want blocking when using local environment to slow developer productive process.
+      But in production we want to make sure every thing was loaded correctly.
+    </p>
+  <img src="assets/mongoose-bootstrap.png" width="500">
+</details>
+
+<details>
+  <summary>
+    <h3>Query test strategy</h3>
+    <p>
+      <strong>In-memory MongoDB instances</strong> for realistic query testing.
+    </p>
+  </summary>
+  <p>
+    Each test suite runs against an in-memory database to avoid external dependencies while preserving real query behavior.
+  </p>
+  <img src="assets/test-loading.png" width="400">
+</details>
+
+<details>
+  <summary>
+    <h3>Test with fake entities</h3>
+    <p>
+      <strong>Customizable mock entities</strong> for precise scenario control.
+    </p>
+  </summary>
+
+  <p>
+    Entities are generated through flexible mock factories using fake data, with the ability to override specific fields when needed. This makes it easy to reproduce edge cases and focus tests only on relevant attributes.
+  </p>
+  <img src="assets/mock-builder.png" width="400">
+</details>
+
+<details>
+  <summary>
+    <h3>Test entites validation</h3>
+  </summary>
+
+  <p>
+    Entities are generated through flexible mock factories using fake data, with the ability to override specific fields when needed. This makes it easy to reproduce edge cases and focus tests only on relevant attributes.
+  </p>
+  <img src="assets/mock-builder.png" width="400">
+</details>
+
+<details>
+  <summary>
+    <h3>Test endpoint’s input and output</h3>
+  </summary>
+
+  <p>
+    Tests validate each endpoint’s input and output using Zod schemas, and then assert that the declared TypeScript types are compatible with the runtime data structure. This is important because TypeScript types and actual runtime values are fundamentally different, and both need to be verified. 
+  </p>
+  <img src="assets/controller-test.png" width="400">
+
+  <p>
+    Assert zod type infer against controller params output type at compile time.
+  </p>
+  <img src="assets/zod-validation-test.png" width="400">
+</details>
+
+<details>
+  <summary>
+    <h3>Test entities object structure</h3>
+  </summary>
+
+  <p>
+    Make sure zod schema is equal to entity structure type. This way we know zod validation is trustful.
+  </p>
+  <img src="assets/entities-zod-test.png" width="400">
+</details>
 
 <br />
 
