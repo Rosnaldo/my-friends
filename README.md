@@ -1,6 +1,12 @@
+# Nanithefuck
+The project is just a compile setup of everthing I have being learning in the process.
+
+
 <picture>
   <img src="assets/wireframe.png" width="70%">
 </picture>
+
+<br />
 
 ## Architecture decisions
 - containerized services. 
@@ -34,7 +40,7 @@
 
 <details>
   <summary>
-    <h3>Migration run scripts</h3>
+    Migration run scripts
   </summary>
     <p>
       When project is loaded, migrations scripts are runned one by one in order.
@@ -46,11 +52,11 @@
 
 <details>
   <summary>
-    <h3>Project lifecycle control</h3>
+    Project lifecycle control
+  </summary>
     <p>
       <strong>Non blocking dependencies loading</strong> for local environment and <strong>blocking promises</strong> for production environment.
     </p>
-  </summary>
     <p>
       Routes, mongoDB collections and indexes will load different depends on the environment.
       We don't want blocking when using local environment to slow developer productive process.
@@ -61,23 +67,33 @@
 
 <details>
   <summary>
-    <h3>Query test strategy</h3>
+    Query test strategy
+  </summary>
     <p>
       <strong>In-memory MongoDB instances</strong> for realistic query testing.
     </p>
-  </summary>
-  <p>
-    Each test suite runs against an in-memory database to avoid external dependencies while preserving real query behavior.
-  </p>
+    <p>
+      Each test suite runs against an in-memory database to avoid external dependencies while preserving real query behavior.
+    </p>
   <img src="assets/test-loading.png" width="400">
 </details>
 
 <details>
   <summary>
-    <h3>Test with fake entities</h3>
+    Test with fake entities
+  </summary>
     <p>
       <strong>Customizable mock entities</strong> for precise scenario control.
     </p>
+    <p>
+      Entities are generated through flexible mock factories using fake data, with the ability to override specific fields when needed. This makes it easy to reproduce edge cases and focus tests only on relevant attributes.
+    </p>
+  <img src="assets/mock-builder.png" width="400">
+</details>
+
+<details>
+  <summary>
+    Test entites validation
   </summary>
 
   <p>
@@ -88,18 +104,7 @@
 
 <details>
   <summary>
-    <h3>Test entites validation</h3>
-  </summary>
-
-  <p>
-    Entities are generated through flexible mock factories using fake data, with the ability to override specific fields when needed. This makes it easy to reproduce edge cases and focus tests only on relevant attributes.
-  </p>
-  <img src="assets/mock-builder.png" width="400">
-</details>
-
-<details>
-  <summary>
-    <h3>Test endpoint’s input and output</h3>
+    Test endpoint’s input and output
   </summary>
 
   <p>
@@ -115,7 +120,7 @@
 
 <details>
   <summary>
-    <h3>Test entities object structure</h3>
+    Test entities object structure
   </summary>
 
   <p>
