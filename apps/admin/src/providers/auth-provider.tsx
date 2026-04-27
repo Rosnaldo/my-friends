@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             keycloak.updateToken(30).catch(() => {
                 setIsAuthenticated(false);
                 keycloak.logout({
-                    redirectUri: window.location.origin + '/myadmin',
+                    redirectUri: window.location.origin + import.meta.env.VITE_BASE_PATH,
                 });
             });
         };
@@ -67,11 +67,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 login: () =>
                     keycloak.login({
                         prompt: 'login',
-                        redirectUri: window.location.href + '/users',
+                        redirectUri: window.location.origin + import.meta.env.VITE_BASE_PATH + '/users',
                     }),
                 logout: () =>
                     keycloak.logout({
-                        redirectUri: window.location.origin + '/myadmin',
+                        redirectUri: window.location.origin + import.meta.env.VITE_BASE_PATH,
                     }),
             }}
         >

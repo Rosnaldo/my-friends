@@ -16,7 +16,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either.data);
+            return res.status(200).send(either);
         }
     );
     app.get(
@@ -28,7 +28,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either.data);
+            return res.status(200).send(either);
         }
     );
     app.get(
@@ -40,7 +40,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either.data);
+            return res.status(200).send(either);
         }
     );
     app.post(
@@ -52,7 +52,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either.data);
+            return res.status(200).send(either);
         }
     );
     app.put(
@@ -64,7 +64,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either.data);
+            return res.status(200).send(either);
         }
     );
     app.delete(
@@ -76,7 +76,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either.data);
+            return res.status(200).send(either);
         }
     );
      app.post(
@@ -88,7 +88,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either.data);
+            return res.status(200).send(either);
         }
     );
     app.post(
@@ -114,7 +114,7 @@ export default (app: Application) => {
                 if (either.isError) {
                     return res.status(400).send(either);
                 }
-                return res.status(200).send(either.data);
+                return res.status(200).send(either);
             } catch (err) {
                 res.status(500).json({ error: 'Failed to upload image' });
             }

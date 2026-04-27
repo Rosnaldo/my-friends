@@ -8,9 +8,25 @@ export default defineConfig(({ mode }) => {
 
   console.log("Backend:", env.VITE_BACKEND_URL)
 
+  const basePath = env.VITE_BASE_PATH || '/'
+
+  const redirectToBase = {
+    name: 'redirect-to-base',
+    configureServer(server: any) {
+      server.middlewares.use((req: any, res: any, next: any) => {
+        if (basePath !== '/' && req.url === '/') {
+          res.writeHead(302, { Location: basePath })
+          res.end()
+          return
+        }
+        next()
+      })
+    }
+  }
+
   return {
     base: env.VITE_CONFIG_BASE,
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), redirectToBase],
     cacheDir: 'node_modules/.vite_cache',
     resolve: {
       alias: {

@@ -129,7 +129,7 @@ export interface Pagination {
 };
 
 export const getInitials = (firstName: string) => {
-    if (firstName) return 'U';
+    if (!firstName) return 'U';
     return firstName
         .split(' ')
         .map(n => n[0])
