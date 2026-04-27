@@ -22,11 +22,13 @@ interface ICriacao {
     role: IUser['IParams']['role'];
 }
 
-interface IByEmail {
-    email: IUser['IParams']['email'];
+interface IByEmailInput {
+    email: NonNullable<IUser['IParams']['email']>;
     firstName: IUser['IParams']['firstName'];
     lastName: IUser['IParams']['lastName'];
 }
+
+type IByEmailOutput = IUser['IParams'];
 
 interface IDelete {
     _id: IUser['IParams']['_id'];
@@ -52,7 +54,10 @@ export interface IUserController {
         IOutput: IPaginacaoOutput;
     };
     ICriacao: ICriacao;
-    IByEmail: IByEmail;
+    IByEmail: {
+        IInput: IByEmailInput;
+        IOutput: IByEmailOutput;
+    };
     IDelete: IDelete;
     IEdit: IEdit;
     ICount: {

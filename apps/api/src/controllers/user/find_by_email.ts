@@ -1,18 +1,19 @@
 import { Request } from 'express';
-import _ from 'lodash';
 
-import { IUser } from '#schemas/user/types';
 import { logError } from '#utils/log_error';
 import { IUserController } from './params';
 import { Either, successData } from '#utils/either';
 import { mapString } from '#utils/mapper/string';
 import { getUserDao } from '#daos/singleton';
 import { UserUtils } from '#schemas/user/utils';
+import { validateInput } from 'src/validations/user/find-by-email';
+import { BadRequestException } from 'src/exceptions/bad_request';
 
-type IByEmail = IUserController['IByEmail'];
+type IInput = IUserController['IByEmail']['IInput'];
+type IOutput = IUserController['IByEmail']['IOutput'];
 
 interface Props {
-    params: IByEmail;
+    params: IInput;
 }
 
 export class FindByEmail {
@@ -30,10 +31,10 @@ export class FindByEmail {
         return new FindByEmail();
     }
 
-    public readonly get = async (props: Props): Promise<Either<IUser['IParams']>> => {
+    public readonly get = async (props: Props): Promise<Either<IOutput>> => {
         try {
-            const { params } = props;
-            const { email } = params;
+            const input = this.transform(props.params);
+            const { email } = input;
             const query = { email };
             const user = await getUserDao().findOne(query);
 
@@ -43,7 +44,7 @@ export class FindByEmail {
         }
     };
 
-    public readonly mapper = (body: Request['body']): IByEmail => {
+    public readonly mapper = (body: Request['body']): IInput => {
         const {
             email,
             firstName,
@@ -55,5 +56,12 @@ export class FindByEmail {
             firstName: mapString(firstName),
             lastName: mapString(lastName),
         };
+    };
+
+    public readonly transform = (params: IInput): IInput => {
+        const zodResult = validateInput(params);
+        if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
+
+        return zodResult.data as unknown as IInput;
     };
 }
