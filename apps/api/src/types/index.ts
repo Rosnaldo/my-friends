@@ -45,6 +45,7 @@ export interface PaginateResponse<T> {
     isError: boolean;
     data: T[];
     message: string;
+    status: number;
     pagination: {
         currentPage: number;
         totalPages: number;

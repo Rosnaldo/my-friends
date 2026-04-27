@@ -19,6 +19,7 @@ export const successData = <T>(data: T[], pagination: Pagination): IsSuccess<T> 
         data,
         message: 'success',
         isError: false,
+        status: 200,
         pagination
     };
 };

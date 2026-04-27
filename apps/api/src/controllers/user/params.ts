@@ -1,16 +1,19 @@
 import { IUser } from "#schemas/user/types";
+import { PaginateResponse } from "src/types";
 
 interface IParticipants {
     meetingId?: string;
     slug?: string;
 }
 
-interface IPaginacao {
+interface IPaginacaoInput {
     search?: string;
     page: number;
     pageSize: number;
     isPagination?: boolean;
 }
+
+type IPaginacaoOutput = PaginateResponse<IUser['IParams']>;
 
 interface ICriacao {
     firstName: IUser['IParams']['firstName'];
@@ -44,7 +47,10 @@ interface ICountOutput {
 
 export interface IUserController {
     IParticipants: IParticipants;
-    IPaginacao: IPaginacao;
+    IPaginacao: {
+        IInput: IPaginacaoInput;
+        IOutput: IPaginacaoOutput;
+    };
     ICriacao: ICriacao;
     IByEmail: IByEmail;
     IDelete: IDelete;

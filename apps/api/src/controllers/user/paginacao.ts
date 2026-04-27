@@ -10,12 +10,14 @@ import { EitherPaginacao, successData } from '#utils/either_paginacao';
 import { mapNumber } from '#utils/mapper/number';
 import { mapBoolean } from '#utils/mapper/boolean';
 import { toUndefined } from '#utils/mapper/to_undefined';
+import { validateInput } from 'src/validations/user/paginacao';
+import { BadRequestException } from 'src/exceptions/bad_request';
 import _ from 'lodash';
 
-type IPaginacao = IUserController['IPaginacao'];
+type IInput = IUserController['IPaginacao']['IInput'];
 
 interface Props {
-    params: IPaginacao;
+    params: IInput;
     user: IUser['IParams'];
 }
 
@@ -36,8 +38,9 @@ export class Paginacao {
 
     public readonly get = async (props: Props): Promise<EitherPaginacao<IUser['IParams']>> => {
         try {
-            const { params } = props;
-            const { page, pageSize, isPagination, search } = params;
+            const { user: _user } = props;
+            const input = this.transform(props.params);
+            const { page, pageSize, isPagination, search } = input;
             const query = _.isNil(search) ? {} : {
                 $or: [
                     { name: { $regex: search, $options: "i" } },
@@ -61,7 +64,7 @@ export class Paginacao {
         }
     };
 
-    public readonly mapper = (body: Request['body']): IPaginacao => {
+    public readonly mapper = (body: Request['body']): IInput => {
         const {
             page,
             pageSize,
@@ -75,5 +78,12 @@ export class Paginacao {
             isPagination: mapBoolean({ v: isPagination, defaultV: true }),
             ...(search ? { search: toUndefined('search', search) } : {}),
         };
+    };
+
+    public readonly transform = (params: IInput): IInput => {
+        const zodResult = validateInput(params);
+        if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
+
+        return zodResult.data as unknown as IInput;
     };
 }
