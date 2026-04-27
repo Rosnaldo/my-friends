@@ -1,14 +1,18 @@
 import { Expect, Equal } from 'src/types';
 import { IMeeting } from 'src/entities/schemas/meeting/types';
-import type { IOutput } from 'src/validations/meetings/by-slug';
-import { MeetingUtils } from 'src/entities/schemas/meeting/utils';
+import { outputSchema, inputSchema } from 'src/validations/meetings/by-slug';
 import z from 'zod';
+import { IMeetingController } from 'src/controllers/meeting/params';
 
-const utils = new MeetingUtils();
 
 describe('Validations > Meeting > BySlug', () => {
     it('validate output type ', async () => {
-        type IUtils = z.infer<typeof utils.zodSchema>;
-        type _t = Expect<Equal<IMeeting['IParams'], IUtils>>
+        type IOutput = z.infer<typeof outputSchema>;
+        type _t = Expect<Equal<IMeeting['IParams'], IOutput>>
+    });
+
+    it('validate input type ', async () => {
+        type IInput = z.infer<typeof inputSchema>;
+        type _t = Expect<Equal<IMeetingController['IBySlug'], IInput>>
     });
 });

@@ -2,7 +2,7 @@ import { mockMeeting } from '../../entities/schemas/meeting/mock';
 import { mongooseBootstrap } from 'src/mongoose_bootstrap';
 import { disconnectMain } from 'src/db/singleton';
 import { IMeeting } from 'src/entities/schemas/meeting/types';
-import { validate } from 'src/validations/meetings/by-slug';
+import { validateOutput } from 'src/validations/meetings/by-slug';
 import { MeetingController } from 'src/controllers/meeting';
 import { isSuccess } from 'src/utils/either';
 
@@ -35,7 +35,7 @@ describe('Controller > Meeting > BySlug', () => {
         const either = await controller.bySlug.get({ mapped });
 
         if (isSuccess(either)) {
-            const zodResult = validate(either.data);
+            const zodResult = validateOutput(either.data);
             expect(zodResult.hasError).toBeFalsy();
         } else {
             throw new Error('Should not throw error');

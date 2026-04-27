@@ -33,7 +33,7 @@
             "#entities/*": ["src/entities/*"],
             "#types/*": ["src/types/*"],
             "#utils/*": ["src/utils/*"],
-            "#validators/*": ["src/validators/*"],
+            "#validations/*": ["src/validations/*"],
             "#mock-meetings": ["src/mock-meetings"],
             "#route_bootstrap": ["src/route_bootstrap"],
             "#mongoose_bootstrap": ["src/mongoose_bootstrap"],

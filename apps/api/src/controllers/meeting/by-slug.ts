@@ -6,6 +6,8 @@ import { IMeetingController } from './params';
 import { Either, successData } from '#utils/either';
 import { IMeeting } from '#schemas/meeting/types';
 import { mapString } from '#utils/mapper/string';
+import { validateInput } from 'src/validations/meetings/by-slug';
+import { BadRequestException } from 'src/exceptions/bad_request';
 
 type IBySlug = IMeetingController['IBySlug'];
 type Mapped = IBySlug
@@ -32,7 +34,8 @@ export class BySlug {
     public readonly get = async (props: Props): Promise<Either<IMeeting['IParams']>> => {
         try {
             const { mapped } = props;
-            const { slug } = mapped;
+            const params = this.transform(mapped);
+            const { slug } = params;
 
             const metting = await this.crud.findOne({ slug });
             return successData(metting);
@@ -49,5 +52,12 @@ export class BySlug {
         return {
             slug: mapString(slug),
         };
+    };
+
+    public readonly transform = (mapped: Mapped): IBySlug => {
+        const zodResult = validateInput(mapped);
+        if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
+
+        return zodResult.data as unknown as IBySlug;
     };
 }
