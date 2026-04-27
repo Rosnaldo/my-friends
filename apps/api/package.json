@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node build/index.js",
-    "local": "API_NODE_ENV=local nodemon --exec \"ts-node -r tsconfig-paths/register --project tsconfig.src.json\" src/index.ts",
-    "dev": "API_NODE_ENV=dev nodemon --exec \"ts-node -r tsconfig-paths/register --project tsconfig.src.json\" src/index.ts",
+    "local": "API_NODE_ENV=local nodemon",
+    "dev": "API_NODE_ENV=dev nodemon",
     "tsc": "rimraf build && tsc -p tsconfig.src.json && tsc-alias -p tsconfig.src.json && rimraf *.tsbuildinfo",
     "build": "npm run tsc",
     "populate": "API_NODE_ENV=local nodemon --exec \"ts-node -r tsconfig-paths/register --project tsconfig.src.json\" src/populate.ts",

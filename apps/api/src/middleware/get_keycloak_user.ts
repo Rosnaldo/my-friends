@@ -57,7 +57,7 @@ export const GetKeycloakUser = async (req: Request, res: Response, next: NextFun
         const result = await validateToken(token);
 
         req.userKc = {
-            id: result.sub,
+            id: result.sub!,
             email: result.email,
             firstName: result.given_name,
             lastName: result.family_name,
