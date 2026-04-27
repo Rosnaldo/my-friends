@@ -1,7 +1,7 @@
 import z from 'zod';
 import _ from 'lodash';
 
-import { makeSmallStringSchema } from '#utils/zod/valid_small_string';
+import { makeSmallStringSchema, makeStringSchema } from '#utils/zod/valid_small_string';
 import { makeEmailSchema } from '#utils/zod/valid_email';
 
 import { IUser } from './types';
@@ -13,13 +13,30 @@ import { getUserModel } from '#models/singleton';
 import properties from '#properties';
 import { hasNoNilValues } from '#utils/has_no_nil_values';
 import { Types } from 'mongoose';
+import { makeObjectIdSchema } from 'src/utils/zod/valid_objectid_schema';
+import { makePhoneSchema } from 'src/utils/zod/valid_phone';
+import { makeDateSchema } from 'src/utils/zod/valid_date';
 
 export class UserUtils {
+    public readonly zodAvatarSchema = z.object({
+        _id: makeObjectIdSchema('_id'),
+        url: makeStringSchema('url'),
+        s3Path: makeStringSchema('s3Path'),
+        s3Host: makeStringSchema('s3Host'),
+        cdnHost: makeStringSchema('cdnHost').optional(),
+    });
+
     public readonly zodSchema = z.object({
+        _id: makeObjectIdSchema('_id'),
         firstName: makeSmallStringSchema('firstName'),
         lastName: makeSmallStringSchema('lastName'),
-        email: makeEmailSchema(),
+        slug: makeSmallStringSchema('slug'),
+        email: makeEmailSchema().optional(),
+        phone: makePhoneSchema().optional(),
         role: makeEnumSchema(UserRoleAll, 'role'),
+        avatar: this.zodAvatarSchema.optional(),
+        createdAt: makeDateSchema('createdAt'),
+        updatedAt: makeDateSchema('updatedAt'),
     });
 
     public readonly toObject = (User: IUser['IDocument']): IUser['IParams'] => {
