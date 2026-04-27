@@ -4,11 +4,13 @@ import { logError } from '#utils/log_error';
 import { MeetingCrud } from '#crud/meeting';
 import { IMeetingController } from './params';
 import { Either, successData } from '#utils/either';
-import { IMeeting } from '#schemas/meeting/types';
 import { mapString } from '#utils/mapper/string';
+import { validateInput } from 'src/validations/meetings/by-id';
+import { BadRequestException } from 'src/exceptions/bad_request';
 
-type IById = IMeetingController['IById'];
-type Mapped = IById
+type IInput = IMeetingController['IById']['IInput'];
+type IOutput = IMeetingController['IById']['IOutput'];
+type Mapped = IInput;
 
 interface Props {
     mapped: Mapped;
@@ -29,10 +31,11 @@ export class ById {
         return new ById();
     }
 
-    public readonly get = async (props: Props): Promise<Either<IMeeting['IParams']>> => {
+    public readonly get = async (props: Props): Promise<Either<IOutput>> => {
         try {
             const { mapped } = props;
-            const { _id } = mapped;
+            const params = this.transform(mapped);
+            const { _id } = params;
 
             const metting = await this.crud.findOne({ _id });
             return successData(metting);
@@ -49,5 +52,12 @@ export class ById {
         return {
             _id: mapString(_id),
         };
+    };
+
+    public readonly transform = (mapped: Mapped): IInput => {
+        const zodResult = validateInput(mapped);
+        if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
+
+        return zodResult.data as unknown as IInput;
     };
 }

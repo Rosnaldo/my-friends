@@ -4,13 +4,13 @@ import { logError } from '#utils/log_error';
 import { MeetingCrud } from '#crud/meeting';
 import { IMeetingController } from './params';
 import { Either, successData } from '#utils/either';
-import { IMeeting } from '#schemas/meeting/types';
 import { mapString } from '#utils/mapper/string';
 import { validateInput } from 'src/validations/meetings/by-slug';
 import { BadRequestException } from 'src/exceptions/bad_request';
 
-type IBySlug = IMeetingController['IBySlug'];
-type Mapped = IBySlug
+type IInput = IMeetingController['IBySlug']['IInput'];
+type IOutput = IMeetingController['IBySlug']['IOutput'];
+type Mapped = IInput;
 
 interface Props {
     mapped: Mapped;
@@ -31,7 +31,7 @@ export class BySlug {
         return new BySlug();
     }
 
-    public readonly get = async (props: Props): Promise<Either<IMeeting['IParams']>> => {
+    public readonly get = async (props: Props): Promise<Either<IOutput>> => {
         try {
             const { mapped } = props;
             const params = this.transform(mapped);
@@ -54,10 +54,10 @@ export class BySlug {
         };
     };
 
-    public readonly transform = (mapped: Mapped): IBySlug => {
+    public readonly transform = (mapped: Mapped): IInput => {
         const zodResult = validateInput(mapped);
         if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
 
-        return zodResult.data as unknown as IBySlug;
+        return zodResult.data as unknown as IInput;
     };
 }

@@ -2,6 +2,9 @@ import { logError } from '#utils/log_error';
 import { UserCrud } from '#crud/user';
 import { Either, successData } from '#utils/either';
 import { UserRole } from '@repo/shared-types';
+import { IUserController } from './params';
+
+type IOutput = IUserController['ICount']['IOutput'];
 
 export class Count {
     public readonly classId = Symbol.for('Controller > User > Count');
@@ -18,7 +21,7 @@ export class Count {
         return new Count();
     }
 
-    public readonly get = async (): Promise<Either<{ members: number, admins: number }>> => {
+    public readonly get = async (): Promise<Either<IOutput>> => {
         try {
             const admins = await this.crud.count({ role: UserRole.admin });
             const members = await this.crud.count({ role: UserRole.member });

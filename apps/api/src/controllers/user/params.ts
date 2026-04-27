@@ -37,6 +37,11 @@ interface IEdit {
     role?: IUser['IParams']['role'];
 }
 
+interface ICountOutput {
+    members: number;
+    admins: number;
+}
+
 export interface IUserController {
     IParticipants: IParticipants;
     IPaginacao: IPaginacao;
@@ -44,4 +49,7 @@ export interface IUserController {
     IByEmail: IByEmail;
     IDelete: IDelete;
     IEdit: IEdit;
+    ICount: {
+        IOutput: ICountOutput
+    };
 }

@@ -45,8 +45,6 @@ export class Avatar {
                 throw new UnauthorizedRequestException('Usuario sem permissão')
             }
 
-            console.log('user', userId)
-
             const compressed = await compressToTargetSize(
                 buffer,
                 200 // KB

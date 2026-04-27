@@ -1,13 +1,17 @@
 import { IMeeting } from "#schemas/meeting/types";
 import { IPicture } from "@repo/shared-types";
 
-interface IById {
+interface IByIdInput {
     _id: string;
 }
 
-interface IBySlug {
+type IByIdOutput = IMeeting['IParams'];
+
+interface IBySlugInput {
     slug: string;
 }
+
+type IBySlugOutput = IMeeting['IParams'];
 
 interface IPaginacao {
     page: number;
@@ -45,8 +49,14 @@ interface IRemoveFromGallery {
 
 export interface IMeetingController {
     IPaginacao: IPaginacao;
-    IById: IById;
-    IBySlug: IBySlug;
+    IById: {
+        IInput: IByIdInput;
+        IOutput: IByIdOutput;
+    };
+    IBySlug: {
+        IInput: IBySlugInput;
+        IOutput: IBySlugOutput;
+    };
     ICriacao: ICriacao;
     IDelete: IDelete;
     IEdit: IEdit;
