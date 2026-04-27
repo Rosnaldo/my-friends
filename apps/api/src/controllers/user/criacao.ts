@@ -6,14 +6,14 @@ import { IUserController } from './params';
 import { Either, successData } from '#utils/either';
 import { validateParse, ValidateParseResult } from '#utils/zod/validate_parse';
 import { BadRequestException } from '#exceptions/bad_request';
-import { IUser } from '#schemas/user/types';
 import { UserBuilder, UserUtils } from '#schemas/user/utils';
 import { mapString } from '#utils/mapper/string';
 import { getKcMain } from '#keycloak/singleton';
 
-type ICriacao = IUserController['ICriacao'];
+type IInput = IUserController['ICriacao']['IInput'];
+type IOutput = IUserController['ICriacao']['IOutput'];
 
-type Mapped = Omit<ICriacao, 'role'> & {
+type Mapped = Omit<IInput, 'role'> & {
     role?: string;
 };
 
@@ -36,7 +36,7 @@ export class Criacao {
         return new Criacao();
     }
 
-    public readonly exec = async (props: Props): Promise<Either<IUser['IParams']>> => {
+    public readonly exec = async (props: Props): Promise<Either<IOutput>> => {
         try {
             const { mapped } = props;
             const params = this.transform(mapped);
@@ -94,10 +94,10 @@ export class Criacao {
         return validateParse<Mapped>(schema, mapped);
     };
 
-    public readonly transform = (mapped: Mapped): ICriacao => {
+    public readonly transform = (mapped: Mapped): IInput => {
         const zodResult = this.validate(mapped);
         if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
 
-        return zodResult.data as unknown as ICriacao;
+        return zodResult.data as unknown as IInput;
     };
 }

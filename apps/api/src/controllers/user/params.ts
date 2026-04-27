@@ -15,12 +15,14 @@ interface IPaginacaoInput {
 
 type IPaginacaoOutput = PaginateResponse<IUser['IParams']>;
 
-interface ICriacao {
+interface ICriacaoInput {
     firstName: IUser['IParams']['firstName'];
     lastName: IUser['IParams']['lastName'];
     email: IUser['IParams']['email'];
     role: IUser['IParams']['role'];
 }
+
+type ICriacaoOutput = IUser['IParams'];
 
 interface IByEmailInput {
     email: NonNullable<IUser['IParams']['email']>;
@@ -53,7 +55,10 @@ export interface IUserController {
         IInput: IPaginacaoInput;
         IOutput: IPaginacaoOutput;
     };
-    ICriacao: ICriacao;
+    ICriacao: {
+        IInput: ICriacaoInput;
+        IOutput: ICriacaoOutput;
+    };
     IByEmail: {
         IInput: IByEmailInput;
         IOutput: IByEmailOutput;

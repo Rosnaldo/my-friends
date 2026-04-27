@@ -6,6 +6,7 @@ import { UserController } from 'src/controllers/user';
 import { UserRole } from '@repo/shared-types';
 import { isSuccess } from 'src/utils/either';
 import { getUserModel } from 'src/entities/models/singleton';
+import { validateOutput } from 'src/validations/user/criacao';
 
 jest.mock('src/keycloak/singleton', () => ({
     getKcMain: jest.fn().mockReturnValue({
@@ -53,5 +54,8 @@ describe('Controller > User > Criacao', () => {
         expect(saved!.lastName).toBe(body.lastName);
         expect(saved!.email).toBe(body.email);
         expect(saved!.role).toBe(body.role);
+
+        const zodResult = validateOutput(either.data);
+        expect(zodResult.hasError).toBeFalsy();
     });
 });
