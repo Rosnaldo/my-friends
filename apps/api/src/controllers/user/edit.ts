@@ -1,16 +1,13 @@
 import { Request } from 'express';
-import z from 'zod';
 import _ from 'lodash';
 
 import { logError } from '#utils/log_error';
 import { UserCrud } from '#crud/user';
 import { IUserController } from './params';
 import { Either, successData } from '#utils/either';
-import { validateParse, ValidateParseResult } from '#utils/zod/validate_parse';
 import { BadRequestException } from '#exceptions/bad_request';
 import { IUser } from '#schemas/user/types';
 import { UserBuilder, UserUtils } from '#schemas/user/utils';
-import { makeObjectIdSchema } from '#utils/zod/valid_objectid_schema';
 import { mapString } from '#utils/mapper/string';
 import { toUndefined } from '#utils/mapper/to_undefined';
 import { or } from '#utils/ports';
@@ -18,9 +15,11 @@ import { UserRole } from '@repo/shared-types';
 import { UnauthorizedRequestException } from '#exceptions/unauthorized_request';
 import { getKcMain } from '#keycloak/singleton';
 import { getUserModel } from '#models/singleton';
+import { validateInput } from 'src/validations/user/edit';
 
-type IEdit = IUserController['IEdit'];
-type Mapped = Omit<IEdit, 'role'> & {
+type IInput = IUserController['IEdit']['IInput'];
+type IOutput = IUserController['IEdit']['IOutput'];
+type Mapped = Omit<IInput, 'role'> & {
     role?: string;
 };
 
@@ -46,7 +45,7 @@ export class Edit {
         return new Edit();
     }
 
-    public readonly exec = async (props: Props): Promise<Either<string>> => {
+    public readonly exec = async (props: Props): Promise<Either<IOutput>> => {
         try {
             const { mapped, userSource } = props;
             const params = this.transform(mapped);
@@ -66,7 +65,7 @@ export class Edit {
             }
 
             const build = new UserBuilder(user);
-            await build.build({ firstName, lastName, email, role }).save();
+            const updated = await build.build({ firstName, lastName, email, role }).save();
 
             if (role !== UserRole.mock) {
                 const kcMain = getKcMain();
@@ -86,27 +85,10 @@ export class Edit {
                 });
             }
 
-            return successData('success');
+            return successData(updated);
         } catch (error: unknown) {
             return logError(error, '/user/edit');
         }
-    };
-
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    public readonly makeZodSchema = () => {
-        const partial = this.utils.zodSchema.pick({
-            firstName: true,
-            lastName: true,
-            email: true,
-            role: true,
-        }).partial();
-
-        const schema = z.object({
-            _id: makeObjectIdSchema('_id'),
-            ...partial.shape,
-        });
-
-        return schema;
     };
 
     public readonly mapper = (body: Request['body']): Mapped => {
@@ -127,16 +109,10 @@ export class Edit {
         };
     };
 
-    private readonly validate = (mapped: Mapped): ValidateParseResult => {
-        const schema = this.makeZodSchema();
-
-        return validateParse<Mapped>(schema, mapped);
-    };
-
-    public readonly transform = (mapped: Mapped): IEdit => {
-        const zodResult = this.validate(mapped);
+    public readonly transform = (mapped: Mapped): IInput => {
+        const zodResult = validateInput(mapped);
         if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
 
-        return zodResult.data as unknown as IEdit;
+        return zodResult.data as unknown as IInput;
     };
 }

@@ -36,13 +36,15 @@ interface IDelete {
     _id: IUser['IParams']['_id'];
 }
 
-interface IEdit {
+interface IEditInput {
     _id: IUser['IParams']['_id'];
     firstName?: IUser['IParams']['firstName'];
     lastName?: IUser['IParams']['lastName'];
     email?: IUser['IParams']['email'];
     role?: IUser['IParams']['role'];
 }
+
+type IEditOutput = IUser['IParams'];
 
 interface ICountOutput {
     members: number;
@@ -64,7 +66,10 @@ export interface IUserController {
         IOutput: IByEmailOutput;
     };
     IDelete: IDelete;
-    IEdit: IEdit;
+    IEdit: {
+        IInput: IEditInput;
+        IOutput: IEditOutput;
+    };
     ICount: {
         IOutput: ICountOutput
     };
