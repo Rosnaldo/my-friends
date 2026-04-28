@@ -9,7 +9,7 @@ import { IMeetingController } from './params';
 import { EitherPaginacao, successData } from '#utils/either_paginacao';
 import { mapNumber } from '#utils/mapper/number';
 
-type IPaginacao = IMeetingController['IPaginacao'];
+type IPaginacao = IMeetingController['IPaginacao']['IInput'];
 
 interface Props {
     params: IPaginacao;

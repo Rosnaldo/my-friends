@@ -10,7 +10,7 @@ import { BadRequestException } from '#exceptions/bad_request';
 import { makeObjectIdSchema } from '#utils/zod/valid_objectid_schema';
 import { mapString } from '#utils/mapper/string';
 
-type IDelete = IMeetingController['IDelete'];
+type IDelete = IMeetingController['IDelete']['IInput'];
 
 interface Props {
     mapped: IDelete;

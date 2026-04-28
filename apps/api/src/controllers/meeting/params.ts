@@ -1,5 +1,6 @@
 import { IMeeting } from "#schemas/meeting/types";
 import { IDay, IParticipant, IPicture } from "@repo/shared-types";
+import { PaginateResponse } from "src/types";
 
 interface IByIdInput {
     _id: string;
@@ -13,10 +14,12 @@ interface IBySlugInput {
 
 type IBySlugOutput = IMeeting['IParams'];
 
-interface IPaginacao {
+interface IPaginacaoInput {
     page: number;
     pageSize: number;
 }
+
+type IPaginacaoOutput = PaginateResponse<IMeeting['IParams']>;
 
 interface ICreateInput {
     name: IMeeting['IParams']['name'];
@@ -48,13 +51,18 @@ interface IUploadGalleryInput {
 
 type IUploadGalleryOutput = IMeeting['IParams'];
 
-interface IRemoveFromGallery {
+interface IRemoveFromGalleryInput {
     meetingId: string;
     s3Path: IPicture['s3Path'];
 }
 
+type IRemoveFromGalleryOutput = IMeeting['IParams'];
+
 export interface IMeetingController {
-    IPaginacao: IPaginacao;
+    IPaginacao: {
+        IInput: IPaginacaoInput;
+        IOutput: IPaginacaoOutput;
+    };
     IById: {
         IInput: IByIdInput;
         IOutput: IByIdOutput;
@@ -78,5 +86,8 @@ export interface IMeetingController {
         IInput: IUploadGalleryInput;
         IOutput: IUploadGalleryOutput;
     };
-    IRemoveFromGallery: IRemoveFromGallery;
+    IRemoveFromGallery: {
+        IInput: IRemoveFromGalleryInput;
+        IOutput: IRemoveFromGalleryOutput;
+    };
 }

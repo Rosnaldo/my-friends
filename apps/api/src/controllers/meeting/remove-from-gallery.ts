@@ -14,7 +14,7 @@ import { validateParse, ValidateParseResult } from '#utils/zod/validate_parse';
 import z from 'zod';
 import { makeObjectIdSchema } from '#utils/zod/valid_objectid_schema';
 
-type IRemoveFromGallery = IMeetingController['IRemoveFromGallery'];
+type IRemoveFromGallery = IMeetingController['IRemoveFromGallery']['IInput'];
 type Mapped = IRemoveFromGallery
 
 interface Props {
