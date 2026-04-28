@@ -56,6 +56,30 @@ describe('Controller > User > Edicao', () => {
         expect(saved!.firstName).toBe(body.firstName);
         expect(saved!.lastName).toBe(body.lastName);
 
+
+        const zodResult = validateOutput(either.data);
+        expect(zodResult.hasError).toBeFalsy();
+    });
+
+    it('updates user update email and role', async () => {
+        const body = {
+            _id: user._id,
+            email: chance.email(),
+            role: UserRole.admin,
+        };
+
+        const adminUser: IUser['IParams'] = { ...user, role: UserRole.admin };
+        const controller = new UserController();
+        const mapped = controller.edit.mapper(body);
+        const either = await controller.edit.exec({ mapped, userSource: adminUser });
+
+        if (!isSuccess(either)) throw new Error('Should not return error');
+
+        const saved = await getUserModel().findById(user._id).lean();
+        expect(saved!.email).toBe(body.email);
+        expect(saved!.role).toBe(body.role);
+
+
         const zodResult = validateOutput(either.data);
         expect(zodResult.hasError).toBeFalsy();
     });

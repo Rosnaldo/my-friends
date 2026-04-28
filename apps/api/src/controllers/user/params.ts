@@ -35,9 +35,11 @@ interface IByEmailInput {
 
 type IByEmailOutput = IUser['IParams'];
 
-interface IDelete {
+interface IDeleteInput {
     _id: IUser['IParams']['_id'];
 }
+
+type IDeleteOutput = {};
 
 interface IEditInput {
     _id: IUser['IParams']['_id'];
@@ -71,7 +73,10 @@ export interface IUserController {
         IInput: IByEmailInput;
         IOutput: IByEmailOutput;
     };
-    IDelete: IDelete;
+    IDelete: {
+        IInput: IDeleteInput;
+        IOutput: IDeleteOutput;
+    };
     IEdit: {
         IInput: IEditInput;
         IOutput: IEditOutput;

@@ -7,9 +7,24 @@ import { IMeeting } from 'src/entities/schemas/meeting/types';
 import { validateOutput } from 'src/validations/user/participants';
 import { UserController } from 'src/controllers/user';
 import { ParticipantStatus } from '@repo/shared-types';
+import 'src/extensions/transform_in_dict';
 
 let user: IUser['IParams'];
 let meeting: IMeeting['IParams'];
+
+jest.mock('src/keycloak/singleton', () => ({
+    getKcMain: jest.fn().mockReturnValue({
+        getKcClientCredentials: jest.fn().mockResolvedValue({
+            users: {
+                create: jest.fn().mockResolvedValue({}),
+                find: jest.fn().mockResolvedValue([{ id: 'mock-kc-user-id' }]),
+                del: jest.fn().mockResolvedValue(undefined),
+                update: jest.fn().mockResolvedValue(undefined),
+            },
+        }),
+    }),
+    buildKcMain: jest.fn().mockResolvedValue({}),
+}));
 
 beforeAll(async () => {
     await mongooseBootstrap();

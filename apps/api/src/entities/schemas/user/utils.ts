@@ -11,7 +11,6 @@ import { IUserAvatar, UserRoleAll } from '@repo/shared-types';
 import { toSlug } from '#utils/to_slug';
 import { getUserModel } from '#models/singleton';
 import properties from '#properties';
-import { hasNoNilValues } from '#utils/has_no_nil_values';
 import { Types } from 'mongoose';
 import { makeObjectIdSchema } from 'src/utils/zod/valid_objectid_schema';
 import { makePhoneSchema } from 'src/utils/zod/valid_phone';
@@ -62,9 +61,7 @@ export class UserBuilder {
         const { firstName, lastName, email, role, avatar } = params;
 
         const init = { firstName, lastName, email, role };
-        if (hasNoNilValues(init)) {
-            this.setInit(init);
-        }
+        this.setInit(init);
 
         if (avatar) {
             this.setAvatar(avatar);
@@ -73,15 +70,19 @@ export class UserBuilder {
         return this;
     };
 
-    public readonly setInit = (params: Pick<IUser['IParams'], 'firstName' | 'lastName' | 'email' | 'role'>): this => {
+    public readonly setInit = (
+        params: Partial<Pick<IUser['IParams'], 'firstName' | 'lastName' | 'email' | 'role'>>
+    ): this => {
         const { firstName, lastName, email, role } = params;
         const slug = toSlug(`${firstName}-${lastName}`);
 
-        this.doc.firstName = firstName;
-        this.doc.lastName = lastName;
-        this.doc.slug = slug;
-        this.doc.email = email;
-        this.doc.role = role;
+        this.doc.firstName = (_.isNil(firstName)) ? this.doc.firstName : firstName;
+        this.doc.lastName = (_.isNil(lastName)) ? this.doc.lastName : lastName;
+        if (_.isNil(this.doc.slug)) {
+            this.doc.slug = slug;
+        }
+        this.doc.email = (_.isNil(email)) ? this.doc.email : email;
+        this.doc.role = (_.isNil(role)) ? this.doc.role : role;
 
         return this;
     };

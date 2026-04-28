@@ -1,36 +1,34 @@
 import { Request } from 'express';
-import z from 'zod';
 
 import { logError } from '#utils/log_error';
 import { UserCrud } from '#crud/user';
 import { IUserController } from './params';
 import { Either, successData } from '#utils/either';
-import { validateParse, ValidateParseResult } from '#utils/zod/validate_parse';
 import { BadRequestException } from '#exceptions/bad_request';
 import { IUser } from '#schemas/user/types';
-import { UserUtils } from '#schemas/user/utils';
-import { makeObjectIdSchema } from '#utils/zod/valid_objectid_schema';
 import { mapString } from '#utils/mapper/string';
 import { UserRole } from '@repo/shared-types';
 import { UnauthorizedRequestException } from '#exceptions/unauthorized_request';
 import { getKcMain } from '#keycloak/singleton';
+import { validateInput } from 'src/validations/user/delete';
 import _ from 'lodash';
 
-type IDelete = IUserController['IDelete'];
+type IInput = IUserController['IDelete']['IInput'];
+type IOutput = IUserController['IDelete']['IOutput'];
+
+type Mapped = IInput;
 
 interface Props {
-    mapped: IDelete;
+    mapped: IInput;
     userSource: IUser['IParams'];
 }
 
 export class Delete {
     public static readonly classId = Symbol.for('Controller > User > Delete');
     private readonly crud: UserCrud;
-    private readonly utils: UserUtils;
 
     private constructor() {
         this.crud = new UserCrud();
-        this.utils = new UserUtils();
     }
 
     static construir(classId: symbol): Delete {
@@ -40,7 +38,7 @@ export class Delete {
         return new Delete();
     }
 
-    public readonly exec = async (props: Props): Promise<Either<string>> => {
+    public readonly exec = async (props: Props): Promise<Either<IOutput>> => {
         try {
             const { mapped, userSource } = props;
             const params = this.transform(mapped);
@@ -70,16 +68,7 @@ export class Delete {
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    public readonly makeZodSchema = () => {
-        const schema = z.object({
-            _id: makeObjectIdSchema('_id'),
-        });
-
-        return schema;
-    };
-
-    public readonly mapper = (body: Request['body']): IDelete => {
+    public readonly mapper = (body: Request['body']): Mapped => {
         const {
             _id,
         } = body;
@@ -89,16 +78,10 @@ export class Delete {
         };
     };
 
-    private readonly validate = (mapped: IDelete): ValidateParseResult => {
-        const schema = this.makeZodSchema();
-
-        return validateParse<IDelete>(schema, mapped);
-    };
-
-    public readonly transform = (mapped: IDelete): IDelete => {
-        const zodResult = this.validate(mapped);
+    public readonly transform = (mapped: Mapped): IInput => {
+        const zodResult = validateInput(mapped);
         if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
 
-        return zodResult.data as unknown as IDelete;
+        return zodResult.data as unknown as IInput;
     };
 }
