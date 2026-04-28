@@ -22,7 +22,7 @@ interface Props {
 }
 
 export class RemoveFromGallery {
-    public static readonly classId = Symbol.for('RemoveFromGallery');
+    public static readonly classId = Symbol.for('Controller > Meeting > RemoveFromGallery');
     private readonly utils: MeetingUtils;
 
     private constructor() {

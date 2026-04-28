@@ -24,7 +24,7 @@ interface ICreateInput {
 
 type ICreateOutput = IMeeting['IParams'];
 
-interface IDelete {
+interface IDeleteInput {
     _id: IMeeting['IParams']['_id'];
 }
 
@@ -40,11 +40,13 @@ interface IEditInput {
 
 type IEditOutput = IMeeting['IParams'];
 
-interface IUploadGallery {
+interface IUploadGalleryInput {
     meetingId: string;
     h: IPicture['h'];
     w: IPicture['w'];
 }
+
+type IUploadGalleryOutput = IMeeting['IParams'];
 
 interface IRemoveFromGallery {
     meetingId: string;
@@ -65,11 +67,16 @@ export interface IMeetingController {
         IInput: ICreateInput;
         IOutput: ICreateOutput;
     };
-    IDelete: IDelete;
+    IDelete: {
+        IInput: IDeleteInput;
+    };
     IEdit: {
         IInput: IEditInput;
         IOutput: IEditOutput;
     };
-    IUploadGallery: IUploadGallery;
+    IUploadGallery: {
+        IInput: IUploadGalleryInput;
+        IOutput: IUploadGalleryOutput;
+    };
     IRemoveFromGallery: IRemoveFromGallery;
 }

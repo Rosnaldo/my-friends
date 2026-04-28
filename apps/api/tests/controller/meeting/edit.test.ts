@@ -117,7 +117,6 @@ describe('Controller > Meeting > Edit', () => {
         expect(either.data.gallery[0].w).toBe(galleryItem.w);
         expect(either.data.gallery[0].h).toBe(galleryItem.h);
 
-        console.log(either.data)
         const zodResult = validateOutput(either.data);
         expect(zodResult.hasError).toBeFalsy();
     });

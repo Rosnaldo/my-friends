@@ -49,8 +49,6 @@ describe('Controller > User > Paginacao', () => {
             throw new Error('Should not throw error');
         }
 
-        console.log(result)
-
         const zodResult = validateOutput(result);
         expect(zodResult.hasError).toBeFalsy();
     });

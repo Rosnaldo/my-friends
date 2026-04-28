@@ -19,8 +19,9 @@ import { makeObjectIdSchema } from '#utils/zod/valid_objectid_schema';
 import z from 'zod';
 import { validateParse, ValidateParseResult } from '#utils/zod/validate_parse';
 
-type IUploadGallery = IMeetingController['IUploadGallery'];
-type Mapped = IUploadGallery
+type IInput = IMeetingController['IUploadGallery']['IInput'];
+type IOutput = IMeetingController['IUploadGallery']['IOutput'];
+type Mapped = IInput
 
 interface Props {
     file: Express.Multer.File;
@@ -28,7 +29,7 @@ interface Props {
 }
 
 export class UploadGallery {
-    public static readonly classId = Symbol.for('UploadGallery');
+    public static readonly classId = Symbol.for('Controller > Meeting > UploadGallery');
     private readonly utils: MeetingUtils;
     
     private constructor() {
@@ -42,7 +43,7 @@ export class UploadGallery {
         return new UploadGallery();
     }
 
-    public readonly exec = async (props: Props): Promise<Either<IMeeting['IParams']>> => {
+    public readonly exec = async (props: Props): Promise<Either<IOutput>> => {
         try {
             const { file, mapped } = props;
             const params = this.transform(mapped);
@@ -108,15 +109,15 @@ export class UploadGallery {
     }
 
     private readonly validate = (mapped: Mapped): ValidateParseResult => {
-            const schema = this.makeZodSchema();
-            return validateParse<Mapped>(schema, mapped);
-        };
+        const schema = this.makeZodSchema();
+        return validateParse<Mapped>(schema, mapped);
+    };
     
-    public readonly transform = (mapped: Mapped): IUploadGallery => {
+    public readonly transform = (mapped: Mapped): IInput => {
         const zodResult = this.validate(mapped);
         if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
 
-        return zodResult.data as unknown as IUploadGallery;
+        return zodResult.data as unknown as IInput;
     };
 
     public readonly mapper = (body: Request['body']): Mapped => {
