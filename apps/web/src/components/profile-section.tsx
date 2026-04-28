@@ -11,28 +11,17 @@ import { ApiError } from "@/error/api"
 import type { IUser } from "@repo/shared-types"
 import { apiBack } from "@/api/backend"
 import { mytoast } from "./toast"
+import { handleRequestError, myfetch } from "@/lib/utils"
 
 async function fetchUser(email: string) {
-    try {
-        const res = await apiBack.get(
+    return await myfetch<IUser>(
+        () => apiBack.get(
             "/users/by-email", {
                 params: { email }
             }
         )
-        
-        if (res.data.isError) {
-            throw new ApiError(res.data.message);
-        }
-
-        const user = res.data as IUser;
-        return user;
-    } catch (error) {
-        if (error instanceof ApiError) {
-            mytoast.error(error.message)
-        }
-        throw error;
-    }
-};
+    );
+}
 
 export default function ProfileSection() {
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -99,7 +88,7 @@ export default function ProfileSection() {
                 mytoast.success("Suas informacoes foram salvas com sucesso.")
             }
         } catch (error) {
-            mytoast.error("Ocorreu um erro inesperado. Tente novamente.")
+            handleRequestError(error);
         } finally {
             await refetch();
         }
@@ -129,7 +118,7 @@ export default function ProfileSection() {
                 mytoast.success("Avatar salvo com sucesso.")
             }
         } catch (error) {
-            mytoast.error("Ocorreu um erro inesperado. Tente novamente.")
+            handleRequestError(error);
         } finally {
             await refetch();
             mytoast.dismiss(loadingToast);

@@ -39,7 +39,7 @@ export class Create {
             const meeting = await builder.create({ name, isActive: false }).save();
             return successData(meeting);
         } catch (error: unknown) {
-            return logError(error, '/meeting/create');
+            return logError(error, '/meetings/create');
         }
     };
 

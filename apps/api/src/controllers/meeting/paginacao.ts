@@ -52,7 +52,7 @@ export class Paginacao {
                 size: pageSize
             });
         } catch (error: unknown) {
-            return logError(error, '/meeting/list');
+            return logError(error, '/meetings/list');
         }
     };
 

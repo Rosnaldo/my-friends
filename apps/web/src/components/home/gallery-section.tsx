@@ -5,7 +5,8 @@ import { ApiError } from "@/error/api";
 import { useQuery } from "@tanstack/react-query";
 import { apiBack } from "@/api/backend";
 import { useParams } from "react-router-dom";
-import { mytoast } from "../toast";
+import { myfetch } from "@/lib/utils";
+import { Spinner } from "../ui/spinner";
 
 
 function VideoThumbnail({ src, onClick }: { src: string; onClick: () => void }) {
@@ -42,25 +43,13 @@ function VideoThumbnail({ src, onClick }: { src: string; onClick: () => void }) 
 }
 
 async function fetchMeeting(slug: string) {
-    try {
-        const res = await apiBack.get(
+    return await myfetch<IMeeting>(
+        () => apiBack.get(
             "/meetings/by-slug", {
                 params: { slug }
             }
         )
-        
-        if (res.data.isError) {
-            throw new ApiError(res.data.message || "/meetings/by-slug request failed");
-        }
-
-        const meeting = res.data as IMeeting;
-        return meeting;
-    } catch (error) {
-        if (error instanceof ApiError) {
-            mytoast.error(error.message)
-        }
-        throw error;
-    }
+    );
 }
 
 export function GallerySection() {
@@ -69,15 +58,20 @@ export function GallerySection() {
 
     const { data: meeting, isLoading: isLoading, isError, error } = useQuery<IMeeting, ApiError>({
         queryKey: ['meeting-name'],
-        queryFn: () => fetchMeeting(slug)
+        queryFn: () => fetchMeeting(slug),
+        retry: false
     });
 
     function Loading() {
-        return <div>Loading...</div>;
+        return <Spinner></Spinner>;
     }
 
-    function ErrorState({ error }: { error: Error }) {
-        return <div style={{ color: "red" }}>{error.message}</div>;
+    function ErrorState({ error: _error }: { error: Error }) {
+        return (
+            <div style={{ color: 'red', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <p>Erro ao carregar componente</p>
+            </div>
+        );
     }
 
     if (isLoading) return <Loading />;

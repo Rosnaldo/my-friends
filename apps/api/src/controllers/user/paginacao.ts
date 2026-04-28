@@ -60,7 +60,7 @@ export class Paginacao {
                 size: pageSize
             });
         } catch (error: unknown) {
-            return logError(error, '/user/list');
+            return logError(error, '/users/list');
         }
     };
 

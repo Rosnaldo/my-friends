@@ -64,7 +64,7 @@ export class Delete {
             await client.users.del({ id: userId });
             return successData('success');
         } catch (error: unknown) {
-            return logError(error, '/user/delete');
+            return logError(error, '/users/delete');
         }
     };
 

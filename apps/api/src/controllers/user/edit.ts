@@ -87,7 +87,7 @@ export class Edit {
 
             return successData(updated);
         } catch (error: unknown) {
-            return logError(error, '/user/edit');
+            return logError(error, '/users/edit');
         }
     };
 

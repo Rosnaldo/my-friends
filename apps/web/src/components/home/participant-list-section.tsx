@@ -7,28 +7,17 @@ import { getFullname, ParticipantStatus, type IUserParticipant } from "@repo/sha
 import { ApiError } from "@/error/api"
 import { apiBack } from "@/api/backend"
 import { useParams } from "react-router-dom"
-import { mytoast } from "../toast"
+import { myfetch } from "@/lib/utils"
 import { Avatar } from "../avatar"
 
 async function fetchParticipants(slug: string) {
-    try {
-        const res = await apiBack.get(
+    return await myfetch<IUserParticipant[]>(
+        () => apiBack.get(
             "/users/participants", {
                 params: { slug }
             }
         )
-
-        if (res.data.isError) {
-            throw new ApiError(res.data.message || "/users/participants request failed");
-        }
-
-        return res.data as IUserParticipant[];
-    } catch (error) {
-        if (error instanceof ApiError) {
-            mytoast.error(error.message)
-        }
-        throw error;
-    }
+    );
 }
 
 // const bgs: string[] = [

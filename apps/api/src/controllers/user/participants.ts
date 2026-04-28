@@ -68,7 +68,7 @@ export class Participants {
 
             return successData(result);
         } catch (error: unknown) {
-            return logError(error, '/user/participants');
+            return logError(error, '/users/participants');
         }
     };
 

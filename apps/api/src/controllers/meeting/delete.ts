@@ -40,7 +40,7 @@ export class Delete {
             await this.crud.delete(_id);
             return successData('success');
         } catch (error: unknown) {
-            return logError(error, '/meeting/delete');
+            return logError(error, '/meetings/delete');
         }
     };
 

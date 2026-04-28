@@ -40,7 +40,7 @@ export class BySlug {
             const metting = await this.crud.findOne({ slug });
             return successData(metting);
         } catch (error: unknown) {
-            return logError(error, '/meeting/by-slug');
+            return logError(error, '/meetings/by-slug');
         }
     };
 

@@ -90,7 +90,7 @@ export class UploadGallery {
             const updated = await builder.save();
             return successData(updated);
         } catch (error: unknown) {
-            return logError(error, '/meeting/by-id');
+            return logError(error, '/meetings/by-id');
         }
     };
 

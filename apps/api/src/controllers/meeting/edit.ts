@@ -54,7 +54,7 @@ export class Edit {
             
             return successData(updated);
         } catch (error: unknown) {
-            return logError(error, '/meeting/edit');
+            return logError(error, '/meetings/edit');
         }
     };
 
