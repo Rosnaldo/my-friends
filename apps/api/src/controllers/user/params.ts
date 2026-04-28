@@ -1,10 +1,13 @@
 import { IUser } from "#schemas/user/types";
+import { IUserParticipant } from "@repo/shared-types";
 import { PaginateResponse } from "src/types";
 
-interface IParticipants {
+interface IParticipantsInput {
     meetingId?: string;
     slug?: string;
 }
+
+type IParticipantsOutput = Array<{ [K in keyof IUserParticipant]: IUserParticipant[K] }>;
 
 interface IPaginacaoInput {
     search?: string;
@@ -52,7 +55,10 @@ interface ICountOutput {
 }
 
 export interface IUserController {
-    IParticipants: IParticipants;
+    IParticipants: {
+        IInput: IParticipantsInput;
+        IOutput: IParticipantsOutput;
+    };
     IPaginacao: {
         IInput: IPaginacaoInput;
         IOutput: IPaginacaoOutput;

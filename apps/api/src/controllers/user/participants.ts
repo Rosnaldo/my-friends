@@ -6,15 +6,17 @@ import { UserCrud } from '#crud/user';
 import { IUserController } from './params';
 import { EitherList } from '#utils/either_list';
 import { MeetingCrud } from '#crud/meeting';
-import { UserRole, type IParticipant, type IUserParticipant } from '@repo/shared-types';
+import { UserRole, type IParticipant } from '@repo/shared-types';
 import { toUndefined } from '#utils/mapper/to_undefined';
-import _ from 'lodash';
+import { validateInput } from 'src/validations/user/participants';
 import { BadRequestException } from '#exceptions/bad_request';
+import _ from 'lodash';
 
-type IMeetingParticipants = IUserController['IParticipants'];
+type IInput = IUserController['IParticipants']['IInput'];
+type IOutput = IUserController['IParticipants']['IOutput'];
 
 interface Props {
-    params: IMeetingParticipants;
+    params: IInput;
     user: IUser['IParams'];
 }
 
@@ -35,10 +37,10 @@ export class Participants {
         return new Participants();
     }
 
-    public readonly get = async (props: Props): Promise<EitherList<IUserParticipant[]>> => {
+    public readonly get = async (props: Props): Promise<EitherList<IOutput>> => {
         try {
-            const { params } = props;
-            const { meetingId, slug } = params;
+            const input = this.transform(props.params);
+            const { meetingId, slug } = input;
 
             const query = {
                 ...(_.isNil(meetingId)) ? {} : { _id: meetingId },
@@ -52,7 +54,7 @@ export class Participants {
 
             const participantIds = meeting.participants.map((p) => p.userId);
             const queryRole = {
-                ...(meeting.isActive) ? { role: { $in:  [UserRole.admin, UserRole.member] } } : {}
+                ...(meeting.isActive) ? { role: { $in: [UserRole.admin, UserRole.member] } } : {}
             };
             const list = await this.crud.find({ _id: { $in: participantIds }, ...queryRole });
 
@@ -68,7 +70,7 @@ export class Participants {
         }
     };
 
-    public readonly mapper = (body: Request['body']): IMeetingParticipants => {
+    public readonly mapper = (body: Request['body']): IInput => {
         const {
             meetingId,
             slug,
@@ -78,5 +80,12 @@ export class Participants {
             ...(meetingId ? { meetingId: toUndefined('meetingId', meetingId) } : {}),
             ...(slug ? { slug: toUndefined('slug', slug) } : {}),
         };
+    };
+
+    public readonly transform = (params: IInput): IInput => {
+        const zodResult = validateInput(params);
+        if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
+
+        return zodResult.data as unknown as IInput;
     };
 }
