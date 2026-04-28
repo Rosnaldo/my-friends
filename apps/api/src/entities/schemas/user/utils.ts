@@ -15,6 +15,8 @@ import { Types } from 'mongoose';
 import { makeObjectIdSchema } from 'src/utils/zod/valid_objectid_schema';
 import { makePhoneSchema } from 'src/utils/zod/valid_phone';
 import { makeDateSchema } from 'src/utils/zod/valid_date';
+import { hasNoNilValues } from 'src/utils/has_no_nil_values';
+import { notNil } from 'src/utils/not_nil';
 
 export class UserUtils {
     public readonly zodAvatarSchema = z.object({
@@ -47,6 +49,14 @@ export class UserUtils {
     };
 }
 
+export type IInitBuilder = {
+    _id?: IUser['IParams']['_id'];
+    firstName: IUser['IParams']['firstName'];
+    lastName: IUser['IParams']['lastName'];
+    email: IUser['IParams']['email'];
+    role: IUser['IParams']['role'];
+}
+
 export class UserBuilder {
     public readonly utils = new UserUtils();
     protected readonly doc: IUser['IDocument'];
@@ -60,8 +70,10 @@ export class UserBuilder {
     public readonly build = (params: Partial<IUser['IParams']>): this => {
         const { firstName, lastName, email, role, avatar } = params;
 
-        const init = { firstName, lastName, email, role };
-        this.setInit(init);
+        const update = { firstName, lastName, email, role };
+        if (hasNoNilValues(update)) {
+            this.update(update);
+        }
 
         if (avatar) {
             this.setAvatar(avatar);
@@ -70,17 +82,28 @@ export class UserBuilder {
         return this;
     };
 
-    public readonly setInit = (
-        params: Partial<Pick<IUser['IParams'], 'firstName' | 'lastName' | 'email' | 'role'>>
-    ): this => {
-        const { firstName, lastName, email, role } = params;
+    public readonly create = (params: IInitBuilder): this => {
+        const { _id, firstName, lastName, email, role } = params;
         const slug = toSlug(`${firstName}-${lastName}`);
+
+        if (notNil(_id)) {
+            this.doc._id = new Types.ObjectId(_id);
+        }
+
+        this.doc.firstName = firstName;
+        this.doc.lastName = lastName;
+        this.doc.slug = slug;
+        this.doc.email = email;
+        this.doc.role = role;
+
+        return this;
+    };
+
+    public readonly update = (params: Partial<IInitBuilder>): this => {
+        const { firstName, lastName, email, role } = params;
 
         this.doc.firstName = (_.isNil(firstName)) ? this.doc.firstName : firstName;
         this.doc.lastName = (_.isNil(lastName)) ? this.doc.lastName : lastName;
-        if (_.isNil(this.doc.slug)) {
-            this.doc.slug = slug;
-        }
         this.doc.email = (_.isNil(email)) ? this.doc.email : email;
         this.doc.role = (_.isNil(role)) ? this.doc.role : role;
 

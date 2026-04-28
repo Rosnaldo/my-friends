@@ -13,7 +13,7 @@ type IParams = {
 export const mockUser = (params: IParams = {}): UserBuilder => {
     const builder = new UserBuilder();
 
-    builder.setInit({
+    builder.create({
         firstName: params.init?.firstName ?? chance.first(),
         lastName: params.init?.lastName ?? chance.last(),
         email: params.init?.email ?? chance.email(),

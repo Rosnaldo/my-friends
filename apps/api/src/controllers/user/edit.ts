@@ -65,7 +65,8 @@ export class Edit {
             }
 
             const build = new UserBuilder(user);
-            const updated = await build.build({ firstName, lastName, email, role }).save();
+
+            const updated = await build.update({ firstName, lastName, email, role }).save();
 
             if (role !== UserRole.mock) {
                 const kcMain = getKcMain();

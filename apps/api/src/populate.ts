@@ -169,7 +169,7 @@ export const populate = async () => {
     const promises = members.map(async (m) => {
         const builder = new UserBuilder();
         return await builder
-            .setInit({
+            .create({
                 firstName: m.firstName,
                 lastName: m.lastName,
                 email: m.email,

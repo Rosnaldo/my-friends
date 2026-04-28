@@ -32,6 +32,7 @@ export default function ProfileSection() {
         lastName:'',
         email: '',
     });
+    const initialData = useRef({ firstName: '', lastName: '', email: '' });
 
     const { data: user, isLoading: isLoading, isError, error, refetch } = useQuery<IUser, ApiError>({
         queryKey: ['user-by-email'],
@@ -40,13 +41,19 @@ export default function ProfileSection() {
 
     useEffect(() => {
         if (user) {
-            setFormData({
+            const data = {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user?.email || '',
-            });
+            };
+            setFormData(data);
+            initialData.current = data;
         }
     }, [user]);
+
+    const hasChanges =
+        formData.firstName !== initialData.current.firstName ||
+        formData.lastName !== initialData.current.lastName;
 
     const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -275,7 +282,7 @@ export default function ProfileSection() {
                         <Button
                             type="submit"
                             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                            disabled={isLoading}
+                            disabled={isLoading || !hasChanges}
                         >
                             {isLoading ? "Salvando..." : "Salvar Alteracoes"}
                         </Button>
