@@ -1,6 +1,6 @@
 import { Avatar } from './avatar';
 import { Count } from './count';
-import { Criacao } from './criacao';
+import { Create } from './create';
 import { Delete } from './delete';
 import { Edit } from './edit';
 import { FindByEmail } from './find_by_email';
@@ -12,7 +12,7 @@ export class UserController {
 
     public readonly paginacao: Paginacao;
     public readonly participants: Participants;
-    public readonly criacao: Criacao;
+    public readonly create: Create;
     public readonly byEmail: FindByEmail;
     public readonly delete: Delete;
     public readonly edit: Edit;
@@ -21,7 +21,7 @@ export class UserController {
 
     constructor() {
         this.count = Count.construir(this.classId);
-        this.criacao = Criacao.construir(this.classId);
+        this.create = Create.construir(this.classId);
         this.participants = Participants.construir(this.classId);
         this.paginacao = Paginacao.construir(this.classId);
         this.byEmail = FindByEmail.construir(this.classId);

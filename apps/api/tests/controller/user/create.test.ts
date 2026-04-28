@@ -6,7 +6,7 @@ import { UserController } from 'src/controllers/user';
 import { UserRole } from '@repo/shared-types';
 import { isSuccess } from 'src/utils/either';
 import { getUserModel } from 'src/entities/models/singleton';
-import { validateOutput } from 'src/validations/user/criacao';
+import { validateOutput } from 'src/validations/user/create';
 
 jest.mock('src/keycloak/singleton', () => ({
     getKcMain: jest.fn().mockReturnValue({
@@ -32,7 +32,7 @@ afterAll(async () => {
     await disconnectMain();
 });
 
-describe('Controller > User > Criacao', () => {
+describe('Controller > User > Create', () => {
     it('persists the user in the database with the correct fields', async () => {
         const body = {
             firstName: chance.first(),
@@ -42,8 +42,8 @@ describe('Controller > User > Criacao', () => {
         };
 
         const controller = new UserController();
-        const mapped = controller.criacao!.mapper(body);
-        const either = await controller.criacao!.exec({ mapped });
+        const mapped = controller.create.mapper(body);
+        const either = await controller.create.exec({ mapped });
 
         if (!isSuccess(either)) throw new Error('Should not return error');
 

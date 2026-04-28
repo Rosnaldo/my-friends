@@ -1,17 +1,16 @@
 import { Request } from 'express';
-import z from 'zod';
 
 import { logError } from '#utils/log_error';
 import { IUserController } from './params';
 import { Either, successData } from '#utils/either';
-import { validateParse, ValidateParseResult } from '#utils/zod/validate_parse';
 import { BadRequestException } from '#exceptions/bad_request';
-import { UserBuilder, UserUtils } from '#schemas/user/utils';
+import { UserBuilder } from '#schemas/user/utils';
 import { mapString } from '#utils/mapper/string';
 import { getKcMain } from '#keycloak/singleton';
+import { validateInput } from 'src/validations/user/create';
 
-type IInput = IUserController['ICriacao']['IInput'];
-type IOutput = IUserController['ICriacao']['IOutput'];
+type IInput = IUserController['ICreate']['IInput'];
+type IOutput = IUserController['ICreate']['IOutput'];
 
 type Mapped = Omit<IInput, 'role'> & {
     role?: string;
@@ -21,19 +20,16 @@ interface Props {
     mapped: Mapped;
 }
 
-export class Criacao {
-    public static readonly classId = Symbol.for('Controller > User > Criacao');
-    private readonly utils: UserUtils;
+export class Create {
+    public static readonly classId = Symbol.for('Controller > User > Create');
 
-    private constructor() {
-        this.utils = new UserUtils();
-    }
+    private constructor() {}
 
-    static construir(classId: symbol): Criacao {
+    static construir(classId: symbol): Create {
         if (classId !== Symbol.for('Controller > User')) {
             throw new Error(`${classId.toString()}: não pode ser instanciado`);
         }
-        return new Criacao();
+        return new Create();
     }
 
     public readonly exec = async (props: Props): Promise<Either<IOutput>> => {
@@ -56,22 +52,6 @@ export class Criacao {
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    public readonly makeZodSchema = () => {
-        const partial = this.utils.zodSchema.pick({
-            firstName: true,
-            lastName: true,
-            email: true,
-            role: true,
-        }).partial();
-
-        const schema = z.object({
-            ...partial.shape,
-        });
-
-        return schema;
-    };
-
     public readonly mapper = (body: Request['body']): Mapped => {
         const {
             firstName,
@@ -88,14 +68,8 @@ export class Criacao {
         };
     };
 
-    private readonly validate = (mapped: Mapped): ValidateParseResult => {
-        const schema = this.makeZodSchema();
-
-        return validateParse<Mapped>(schema, mapped);
-    };
-
     public readonly transform = (mapped: Mapped): IInput => {
-        const zodResult = this.validate(mapped);
+        const zodResult = validateInput(mapped);
         if (zodResult.hasError) throw new BadRequestException(zodResult.message!);
 
         return zodResult.data as unknown as IInput;
