@@ -2,7 +2,6 @@ import { mockUser } from '../../entities/schemas/user/mock';
 import { mongooseBootstrap } from 'src/mongoose_bootstrap';
 import { disconnectMain } from 'src/db/singleton';
 import { IUser } from 'src/entities/schemas/user/types';
-import { validateOutput } from 'src/validations/user/delete';
 import { UserController } from 'src/controllers/user';
 import { UserRole } from '@repo/shared-types';
 import { isSuccess } from 'src/utils/either';
@@ -47,8 +46,5 @@ describe('Controller > User > Delete', () => {
         const deleted = await getUserModel().findById(target._id).lean();
 
         expect(deleted).toBeNull();
-
-        const zodResult = validateOutput(either.data);
-        expect(zodResult.hasError).toBeFalsy();
     });
 });

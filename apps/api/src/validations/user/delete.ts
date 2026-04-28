@@ -12,11 +12,3 @@ export const inputSchema = z.object({
 export const validateInput = (params: any): ValidateParseResult => {
     return validateParse<IInput>(inputSchema, params);
 };
-
-type IOutput = IUserController['IDelete']['IOutput'];
-
-export const outputSchema = z.object();
-
-export const validateOutput = (params: IOutput): ValidateParseResult => {
-    return validateParse<IOutput>(outputSchema, params);
-};
