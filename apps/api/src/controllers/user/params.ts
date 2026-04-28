@@ -29,8 +29,6 @@ type ICreateOutput = IUser['IParams'];
 
 interface IByEmailInput {
     email: NonNullable<IUser['IParams']['email']>;
-    firstName: IUser['IParams']['firstName'];
-    lastName: IUser['IParams']['lastName'];
 }
 
 type IByEmailOutput = IUser['IParams'];

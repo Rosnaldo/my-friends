@@ -61,7 +61,10 @@ export default (app: Application) => {
             const controller = new UserController();
             const params = controller.byEmail!.mapper({ ...req.query, userKc: req.userKc });
             const either = await controller.byEmail!.get({ params });
-            return res.status(200).send(either);
+            if (either.isError) {
+                return res.status(400).send(either);
+            }
+            return res.status(200).send(either.data);
         }
     );
     app.post(
@@ -73,7 +76,10 @@ export default (app: Application) => {
             const controller = new UserController();
             const mapped = controller.create!.mapper(req.body);
             const either = await controller.create!.exec({ mapped });
-            return res.status(200).send(either);
+            if (either.isError) {
+                return res.status(400).send(either);
+            }
+            return res.status(200).send(either.data);
         }
     );
     app.put(
@@ -85,7 +91,10 @@ export default (app: Application) => {
             const controller = new UserController();
             const mapped = controller.edit!.mapper({ ...req.body });
             const either = await controller.edit!.exec({ mapped, userSource: req.user });
-            return res.status(200).send(either);
+            if (either.isError) {
+                return res.status(400).send(either);
+            }
+            return res.status(200).send(either.data);
         }
     );
     app.delete(
@@ -119,7 +128,10 @@ export default (app: Application) => {
                 const userId = req.user._id;
                 const controller = new UserController();
                 const either = await controller.avatar!.exec({ userId, buffer: req.file.buffer, mimetype: req.file.mimetype, userSource: req.user });
-                return res.status(200).send(either);
+                if (either.isError) {
+                    return res.status(400).send(either);
+                }
+                return res.status(200).send(either.data);
             } catch (err) {
                 res.status(500).json({ error: 'Failed to upload image' });
             }

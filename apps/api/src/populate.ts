@@ -24,7 +24,7 @@ const members: UserPick[] = [
         lastName: "Tsuzuki",
         email: "andreytsuzuki@gmail.com",
         avatar: {
-            s3Path: `avatars/${properties.nodeEnv}/andrey-tsuzuki/young-japanese-guy.jpg`
+            s3Path: `avatars/${properties.nodeEnv}/young-japanese-guy.jpg`
         },
         role: 'admin',
     },

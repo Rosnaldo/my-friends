@@ -36,8 +36,6 @@ describe('Controller > User > FindByEmail', () => {
     it('validate output', async () => {
         const params = {
             email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
         };
 
         const controller = new UserController();

@@ -34,27 +34,24 @@ export class FindByEmail {
     public readonly get = async (props: Props): Promise<Either<IOutput>> => {
         try {
             const input = this.transform(props.params);
+
             const { email } = input;
             const query = { email };
             const user = await getUserDao().findOne(query);
 
             return successData(this.utils.toObject(user!));
         } catch (error: unknown) {
-            return logError(error, '/user/by-email');
+            return logError(error, '/users/by-email');
         }
     };
 
     public readonly mapper = (body: Request['body']): IInput => {
         const {
             email,
-            firstName,
-            lastName,
         } = body;
 
         return {
             email: mapString(email),
-            firstName: mapString(firstName),
-            lastName: mapString(lastName),
         };
     };
 
