@@ -11,5 +11,5 @@ export default {
     keycloakClientApiSecret: process.env.KEYCLOAK_CLIENT_API_SECRET || '',
     isRuntime: process.env.RUNTIME || '',
     s3Host: 'https://nanithefuck-34.s3.sa-east-1.amazonaws.com',
-    cdnHost: '',
+    cdnHost: process.env.CDN_HOST || 'cdnHost',
 };

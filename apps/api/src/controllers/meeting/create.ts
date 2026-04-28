@@ -36,7 +36,7 @@ export class Create {
             const { name } = params;
 
             const builder = new MeetingBuilder();
-            const meeting = await builder.setInit({ name, isActive: false }).save();
+            const meeting = await builder.create({ name, isActive: false }).save();
             return successData(meeting);
         } catch (error: unknown) {
             return logError(error, '/meeting/create');

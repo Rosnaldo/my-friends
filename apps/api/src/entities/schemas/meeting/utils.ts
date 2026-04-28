@@ -13,9 +13,10 @@ import { makeObjectIdSchema } from '#utils/zod/valid_objectid_schema';
 import { makeUrlSchema } from '#utils/zod/valid_url';
 import { toSlug } from '#utils/to_slug';
 import { getMeetingModel } from '#models/singleton';
-import { hasNoNilValues } from '#utils/has_no_nil_values';
 import properties from '#properties';
 import { notNil } from '#utils/not_nil';
+import _ from 'lodash';
+import { hasNoNilValues } from 'src/utils/has_no_nil_values';
 
 export class MeetingUtils {
     public readonly zodDaySchema = z.object({
@@ -64,6 +65,14 @@ export class MeetingUtils {
         return {
             ...object,
             _id: meeting?._id?.toString(),
+            days: (object.days || []).map((obj: any) => ({
+                ...obj,
+                _id: obj?._id?.toString(),
+            })),
+            gallery: (object.gallery || []).map((obj: any) => ({
+                ...obj,
+                _id: obj?._id?.toString(),
+            })),
             participants: meeting?.participants?.map((obj: IParticipantSchema) => {
                 return {
                     userId: obj?.userId?.toString(),
@@ -115,12 +124,12 @@ export class MeetingBuilder {
         else this.doc = new MeetingModel();
     }
 
-    public readonly build = (params: IMeetingPickedBuilder): this => {
+    public readonly build = (params: Partial<IMeetingPickedBuilder>): this => {
         const { name, isActive, gallery, days, participants } = params;
 
-        const init = { name, isActive };
-        if (hasNoNilValues(init)) {
-            this.setInit(init);
+        const update = { name, isActive };
+        if (hasNoNilValues(update)) {
+            this.update(update);
         }
 
         if (gallery) {
@@ -138,7 +147,7 @@ export class MeetingBuilder {
         return this;
     };
 
-    public readonly setInit = (params: IInitBuilder): this => {
+    public readonly create = (params: IInitBuilder): this => {
         const { name, isActive, _id } = params;
         const slug = toSlug(name);
 
@@ -148,6 +157,15 @@ export class MeetingBuilder {
         this.doc.name = name;
         this.doc.slug = slug;
         this.doc.isActive = isActive;
+
+        return this;
+    };
+
+    public readonly update = (params: Partial<IInitBuilder>): this => {
+        const { name, isActive } = params;
+
+        this.doc.name = (_.isNil(name)) ? this.doc.name : name;
+        this.doc.isActive = (_.isNil(isActive)) ? this.doc.isActive : isActive;
 
         return this;
     };
@@ -173,7 +191,7 @@ export class MeetingBuilder {
     public readonly addToGallery = (p: IPicturePickedBuilder): this => {
         this.doc.gallery?.push({
             ...p,
-            ...(p?._id ? { _id: new Types.ObjectId(p._id) } : { _id: new Types.ObjectId() }),
+            ...(_.isNil(p?._id) ? { _id: new Types.ObjectId() } : { _id: new Types.ObjectId(p._id) }),
             s3Host: properties.s3Host,
             cdnHost: properties.cdnHost,
         } satisfies IPictureSchema);
@@ -183,13 +201,13 @@ export class MeetingBuilder {
     public readonly setDays = (days: IDayPickedBuilder[]): this => {
         this.doc.days = days.map(d => {
             const isoDate = new Date(d.isodate);
-            const dayNumber = isoDate.getDate();
+            const dayNumber = isoDate.getDate() + 1;
             const weekdayNumber = isoDate.getDay();
             const monthNumber = isoDate.getMonth() + 1;
             const year = isoDate.getFullYear();
 
             function formatDDMMYYYY(date: Date): string {
-                const day = String(date.getDate()).padStart(2, "0"); // garante 2 dígitos
+                const day = String(date.getDate() + 1).padStart(2, "0"); // garante 2 dígitos
                 const month = String(date.getMonth() + 1).padStart(2, "0"); // 0-11 → 1-12
                 const year = date.getFullYear();
 
@@ -197,7 +215,7 @@ export class MeetingBuilder {
             }
 
             return {
-                ...(d?._id ? { _id: new Types.ObjectId(d._id) } : { _id: new Types.ObjectId() }),
+                ...(_.isNil(d?._id) ? { _id: new Types.ObjectId() } : { _id: new Types.ObjectId(d._id) }),
                 start: d.start,
                 finish: d.finish,
                 isodate: isoDate,

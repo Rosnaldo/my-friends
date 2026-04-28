@@ -19,7 +19,7 @@ export const mockMeeting = (params: IParams): MeetingBuilder => {
     const builder = new MeetingBuilder();
 
     builder
-        .setInit({
+        .create({
             _id: params?.init._id ?? new Types.ObjectId().toString(),
             name: params?.init.name ?? chance.name(),
             isActive: params?.init.isActive ?? chance.bool(),

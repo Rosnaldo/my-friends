@@ -1,5 +1,5 @@
 import { IMeeting } from "#schemas/meeting/types";
-import { IPicture } from "@repo/shared-types";
+import { IDay, IParticipant, IPicture } from "@repo/shared-types";
 
 interface IByIdInput {
     _id: string;
@@ -28,15 +28,17 @@ interface IDelete {
     _id: IMeeting['IParams']['_id'];
 }
 
-interface IEdit {
+interface IEditInput {
     _id: IMeeting['IParams']['_id'];
     name: IMeeting['IParams']['name'];
     slug: IMeeting['IParams']['slug'];
     isActive: IMeeting['IParams']['isActive'];
-    days: IMeeting['IParams']['days'];
-    gallery: IMeeting['IParams']['gallery'];
-    participants: IMeeting['IParams']['participants'];
+    days: Pick<IDay, 'allDayLong' | 'finish' | 'start' | 'isodate'>[];
+    gallery: Pick<IPicture, 'type' | 'h' | 'w' | 'url' | 's3Path'>[];
+    participants: IParticipant[];
 }
+
+type IEditOutput = IMeeting['IParams'];
 
 interface IUploadGallery {
     meetingId: string;
@@ -64,7 +66,10 @@ export interface IMeetingController {
         IOutput: ICreateOutput;
     };
     IDelete: IDelete;
-    IEdit: IEdit;
+    IEdit: {
+        IInput: IEditInput;
+        IOutput: IEditOutput;
+    };
     IUploadGallery: IUploadGallery;
     IRemoveFromGallery: IRemoveFromGallery;
 }
