@@ -18,9 +18,11 @@ interface IPaginacao {
     pageSize: number;
 }
 
-interface ICriacao {
+interface ICreateInput {
     name: IMeeting['IParams']['name'];
 }
+
+type ICreateOutput = IMeeting['IParams'];
 
 interface IDelete {
     _id: IMeeting['IParams']['_id'];
@@ -57,7 +59,10 @@ export interface IMeetingController {
         IInput: IBySlugInput;
         IOutput: IBySlugOutput;
     };
-    ICriacao: ICriacao;
+    ICreate: {
+        IInput: ICreateInput;
+        IOutput: ICreateOutput;
+    };
     IDelete: IDelete;
     IEdit: IEdit;
     IUploadGallery: IUploadGallery;

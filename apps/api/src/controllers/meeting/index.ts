@@ -1,6 +1,6 @@
 import { ById } from './by-id';
 import { BySlug } from './by-slug';
-import { Criacao } from './criacao';
+import { Create } from './create';
 import { Delete } from './delete';
 import { Edit } from './edit';
 import { Paginacao } from './paginacao';
@@ -13,14 +13,14 @@ export class MeetingController {
     public readonly paginacao: Paginacao;
     public readonly byId: ById;
     public readonly bySlug: BySlug;
-    public readonly criacao: Criacao;
+    public readonly create: Create;
     public readonly delete: Delete;
     public readonly edit: Edit;
     public readonly uploadGallery: UploadGallery;
     public readonly removeFromGallery: RemoveFromGallery;
 
     constructor() {
-        this.criacao = Criacao.construir( this.classId);
+        this.create = Create.construir( this.classId);
         this.paginacao = Paginacao.construir(this.classId);
         this.byId = ById.construir(this.classId);
         this.bySlug = BySlug.construir(this.classId);
