@@ -16,7 +16,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either);
+            return res.status(200).send(either.data);
         }
     );
     app.get(
@@ -28,7 +28,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either);
+            return res.status(200).send(either.data);
         }
     );
     app.get(
@@ -37,22 +37,22 @@ export default (app: Application) => {
             const controller = new MeetingController();
             const mapped = controller.byId!.mapper(req.query);
             const either = await controller.byId!.get({ mapped });
-            if (either.isError) {
+             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either);
+            return res.status(200).send(either.data);
         }
     );
     app.post(
         '/meetings/create',
         async (req, res) => {
             const controller = new MeetingController();
-            const mapped = controller.criacao!.mapper(req.body);
-            const either = await controller.criacao!.exec({ mapped });
+            const mapped = controller.create!.mapper(req.body);
+            const either = await controller.create!.exec({ mapped });
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either);
+            return res.status(200).send(either.data);
         }
     );
     app.put(
@@ -64,7 +64,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either);
+            return res.status(200).send(either.data);
         }
     );
     app.delete(
@@ -114,7 +114,7 @@ export default (app: Application) => {
                 if (either.isError) {
                     return res.status(400).send(either);
                 }
-                return res.status(200).send(either);
+                return res.status(200).send(either.data);
             } catch (err) {
                 res.status(500).json({ error: 'Failed to upload image' });
             }

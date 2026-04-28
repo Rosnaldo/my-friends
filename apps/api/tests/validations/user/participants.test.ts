@@ -6,7 +6,7 @@ import { IUserController } from 'src/controllers/user/params';
 describe('Validations > User > Participants', () => {
     it('validate output type', () => {
         type IOutput = z.infer<typeof outputSchema>;
-        type _t = Expect<Equal<IUserController['IParticipants']['IOutput'], IOutput>>;
+        type _t = Expect<Equal<Array<IUserController['IParticipants']['IOutput']>, IOutput>>;
     });
 
     it('validate input type', () => {

@@ -16,7 +16,10 @@ export default (app: Application) => {
         async (req, res) => {
             const controller = new UserController();
             const either = await controller.count!.get();
-            return res.status(200).send(either);
+            if (either.isError) {
+                return res.status(400).send(either);
+            }
+            return res.status(200).send(either.data);
         }
     );
     app.get(
@@ -29,7 +32,10 @@ export default (app: Application) => {
             const controller = new UserController();
             const params = controller.paginacao!.mapper(req.query);
             const either = await controller.paginacao!.get({ user, params });
-            return res.status(200).send(either);
+            if (either.isError) {
+                return res.status(400).send(either);
+            }
+            return res.status(200).send(either.data);
         }
     );
     app.get(
@@ -42,7 +48,10 @@ export default (app: Application) => {
             const controller = new UserController();
             const params = controller.participants!.mapper(req.query);
             const either = await controller.participants!.get({ user, params });
-            return res.status(200).send(either);
+            if (either.isError) {
+                return res.status(400).send(either);
+            }
+            return res.status(200).send(either.data);
         }
     );
     app.get(
@@ -62,8 +71,8 @@ export default (app: Application) => {
         authorizeMiddleware([UserRole.admin]),
         async (req, res) => {
             const controller = new UserController();
-            const mapped = controller.criacao!.mapper(req.body);
-            const either = await controller.criacao!.exec({ mapped });
+            const mapped = controller.create!.mapper(req.body);
+            const either = await controller.create!.exec({ mapped });
             return res.status(200).send(either);
         }
     );

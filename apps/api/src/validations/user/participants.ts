@@ -28,6 +28,6 @@ export const outputSchema = z.array(
     })
 );
 
-export const validateOutput = (params: IOutput): ValidateParseResult => {
-    return validateParse<IOutput>(outputSchema, params);
+export const validateOutput = (params: IOutput[]): ValidateParseResult => {
+    return validateParse<IOutput[]>(outputSchema, params);
 };

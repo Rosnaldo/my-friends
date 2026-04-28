@@ -4,7 +4,7 @@ import { IUser } from '#schemas/user/types';
 import { logError } from '#utils/log_error';
 import { UserCrud } from '#crud/user';
 import { IUserController } from './params';
-import { EitherList } from '#utils/either_list';
+import { EitherList, successData } from '#utils/either_list';
 import { MeetingCrud } from '#crud/meeting';
 import { UserRole, type IParticipant } from '@repo/shared-types';
 import { toUndefined } from '#utils/mapper/to_undefined';
@@ -61,10 +61,12 @@ export class Participants {
             const participantsDict: Record<string, { value: IParticipant }> =
                 meeting.participants.transformInDict('userId');
 
-            return list.map((l) => ({
+            const result = list.map((l) => ({
                 ...l,
                 status: participantsDict[l._id].value.status,
             }));
+
+            return successData(result);
         } catch (error: unknown) {
             return logError(error, '/user/participants');
         }

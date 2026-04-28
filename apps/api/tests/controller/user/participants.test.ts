@@ -8,6 +8,7 @@ import { validateOutput } from 'src/validations/user/participants';
 import { UserController } from 'src/controllers/user';
 import { ParticipantStatus } from '@repo/shared-types';
 import 'src/extensions/transform_in_dict';
+import { isSuccess } from 'src/utils/either_list';
 
 let user: IUser['IParams'];
 let meeting: IMeeting['IParams'];
@@ -49,9 +50,11 @@ describe('Controller > User > Participants', () => {
         const mapped = controller.participants.mapper(params);
         const either = await controller.participants.get({ user, params: mapped });
 
-        if (!Array.isArray(either)) throw new Error('Should not return error');
+        if (!isSuccess(either)) throw new Error('Should not return error');
 
-        const zodResult = validateOutput(either);
+        expect(either.data.length).toBeGreaterThanOrEqual(1);
+
+        const zodResult = validateOutput(either.data);
         expect(zodResult.hasError).toBeFalsy();
     });
 
@@ -62,12 +65,12 @@ describe('Controller > User > Participants', () => {
         const mapped = controller.participants.mapper(params);
         const either = await controller.participants.get({ user, params: mapped });
 
-        if (!Array.isArray(either)) throw new Error('Should not return error');
+        if (!isSuccess(either)) throw new Error('Should not return error');
 
-        expect(either.length).toBeGreaterThanOrEqual(1);
-        expect(either[0].status).toBe(ParticipantStatus.confirmed);
+        expect(either.data.length).toBeGreaterThanOrEqual(1);
+        expect(either.data[0].status).toBe(ParticipantStatus.confirmed);
 
-        const zodResult = validateOutput(either);
+        const zodResult = validateOutput(either.data);
         expect(zodResult.hasError).toBeFalsy();
     });
 });

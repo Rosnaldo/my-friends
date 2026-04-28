@@ -7,7 +7,7 @@ interface IParticipantsInput {
     slug?: string;
 }
 
-type IParticipantsOutput = Array<{ [K in keyof IUserParticipant]: IUserParticipant[K] }>;
+type IParticipantsOutput = { [K in keyof IUserParticipant]: IUserParticipant[K] };
 
 interface IPaginacaoInput {
     search?: string;
