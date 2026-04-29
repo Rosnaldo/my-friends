@@ -7,12 +7,13 @@ import { MeetingParticipants } from "@/components/meeting-participants"
 import type { IMeeting, IParticipant, IUser, IUserParticipant, Pagination, ParticipantStatus } from "@repo/shared-types"
 import { apiBack } from "@/api/backend"
 import { ApiError } from "@/error/api"
-import { useQueries, type UseQueryOptions } from "@tanstack/react-query"
+import { useQueries } from "@tanstack/react-query"
 import { useReset } from "@/hooks/use-reset"
 import { checkErrorByField } from "@/utils/check_error_by_field"
 import { mytoast } from "@/components/toast"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { myfetch } from "@/utils/utils"
 
 export function SwitchDemo({ isActive, handleIsActiveChange }: { isActive: boolean, handleIsActiveChange: (checked: boolean) => void }) {
   return (
@@ -27,48 +28,41 @@ export function SwitchDemo({ isActive, handleIsActiveChange }: { isActive: boole
   )
 };
 
-const fetchUsersList = async () => {
-    const res = await apiBack.get(
-        "/users/list", {
-            params: {
-                isPagination: false
+async function fetchUsersList() {
+    return await myfetch<{ data: IUser[], pagination: Pagination }>(
+        () => apiBack.get(
+            "/users/list", {
+                params: {
+                    isPagination: false
+                }
             }
-        }
-        
-    )
-    if (res.data.isError) {
-        throw new ApiError(res.data.message);
-    }
-    return res.data;
-};
+            
+        )
+    );
+}
 
-const fetchUserParticipants = async (meetingId?: string) => {
-    const res = await apiBack.get(
-        "/users/participants", {
-            params: {
-                meetingId,
-                isPagination: false
+async function fetchUserParticipants(meetingId?: string) {
+    return await myfetch<IUserParticipant[]>(
+        () => apiBack.get(
+            "/users/participants", {
+                params: {
+                    meetingId,
+                    isPagination: false
+                }
             }
-        }
-        
-    )
-    if (res.data.isError) {
-        throw new ApiError(res.data.message);
-    }
-    return res.data;
-};
+        )
+    );
+}
 
-const fetchMeetingById = (meetingId?: string) => async () => {
-    const res = await apiBack.get(
-        "/meetings/by-id", {
-            params: { _id: meetingId }
-        }
-    )
-    if (res.data.isError) {
-        throw new ApiError(res.data.message);
-    }
-    return res.data;
- };
+async function fetchMeetingById(meetingId?: string) {
+    return await myfetch<IMeeting>(
+        () => apiBack.get(
+            "/meetings/by-id", {
+                params: { _id: meetingId }
+            }
+        )
+    );
+}
 
 export default function MeetingDetail() {
     const { meetingId = '' } = useParams<{ meetingId: string }>()
@@ -80,15 +74,21 @@ export default function MeetingDetail() {
             };
         }
     );
-    const results = useQueries<[
-        UseQueryOptions<IMeeting>,
-        UseQueryOptions<{ data: IUser[], pagination: Pagination }>,
-        UseQueryOptions<IUserParticipant[]>,
-    ]>({
+    const results = useQueries({
         queries: [
-            { queryKey: ['meetings/by-id'], queryFn: fetchMeetingById(meetingId) },
-            { queryKey: ['users/list'], queryFn: fetchUsersList },
-            { queryKey: ['users/participants'], queryFn: () => fetchUserParticipants(meetingId) },
+            {
+                queryKey: ['meetings/by-id'],
+                queryFn: () => fetchMeetingById(meetingId)
+            },
+            {
+                queryKey: ['users/list'],
+                queryFn: () => fetchUsersList(),
+                placeholderData: { data: [], pagination: {} as Pagination }
+            },
+            {
+                queryKey: ['users/participants'],
+                queryFn: () => fetchUserParticipants(meetingId)
+            },
         ],
     });
     
@@ -106,17 +106,17 @@ export default function MeetingDetail() {
 
     if (!meeting) {
         return (
-        <div className="flex flex-col items-center justify-center py-20">
-            <p className="text-lg font-medium text-foreground">
-            Meeting nao encontrado
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-            Este meeting pode ter sido removido.
-            </p>
-            <Button variant="outline" className="mt-4" asChild>
-            <a href="/meetings">Voltar para Meetings</a>
-            </Button>
-        </div>
+            <div className="flex flex-col items-center justify-center py-20">
+                <p className="text-lg font-medium text-foreground">
+                Meeting nao encontrado
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                Este meeting pode ter sido removido.
+                </p>
+                <Button variant="outline" className="mt-4" asChild>
+                <a href="/meetings">Voltar para Meetings</a>
+                </Button>
+            </div>
         )
     }
 
@@ -232,13 +232,13 @@ export default function MeetingDetail() {
         {/* Header */}
         <div className="flex items-center gap-3">
             <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 shrink-0"
-            onClick={() => navigate("/meetings")}
-            aria-label="Voltar para meetings"
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 shrink-0"
+                onClick={() => navigate("/meetings")}
+                aria-label="Voltar para meetings"
             >
-            <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -272,6 +272,7 @@ export default function MeetingDetail() {
         {/* Participants Section */}
         <div className="rounded-lg border bg-card p-5">
             <MeetingParticipants
+                meeting={meeting}
                 resetMeeting={resetMeeting}
                 participants={participants}
                 users={users}

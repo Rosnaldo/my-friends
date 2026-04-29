@@ -16,15 +16,16 @@ import {
 } from "@/components/ui/dialog"
 
 import { Checkbox } from "@/components/ui/checkbox"
-import type { IUser, IUserParticipant, Pagination } from "@repo/shared-types"
+import type { IMeeting, IUser, IUserParticipant, Pagination } from "@repo/shared-types"
 import { useStateReset } from "@/hooks/use-state-reset"
 import _ from "lodash"
-import { useQueries, type UseQueryOptions } from "@tanstack/react-query"
-import { ApiError } from "@/error/api"
+import { useQueries } from "@tanstack/react-query"
 import { apiBack } from "@/api/backend"
 import { useDebounce } from "@/hooks/use-debounce"
+import { myfetch } from "@/utils/utils"
 
 interface MeetingParticipantsProps {
+    meeting: IMeeting;
     resetMeeting: () => void
     participants: IUserParticipant[]
     onAddParticipants: (userIds: string[]) => void
@@ -32,21 +33,18 @@ interface MeetingParticipantsProps {
     setAddOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const fetchUsersList = ({ currentPage, search }: { currentPage: number, search: string }) => async () => {
-    const res = await apiBack.get(
-        "/users/list", {
-            params: {
-                page: currentPage,
-                search,
+async function fetchUsersList({ currentPage, search }: { currentPage: number, search: string }) {
+    return await myfetch<{ data: IUser[], pagination: Pagination }>(
+        () => apiBack.get(
+            "/users/list", {
+                params: {
+                    page: currentPage,
+                    search,
+                }
             }
-        }
-    )
-    if (res.data.isError) {
-        throw new ApiError(res.data.message);
-    }
-
-    return res.data;
-};
+        ),
+    );
+}
 
 interface SortedAvailableUsersProps {
     availableUsers: IUser[]
@@ -98,7 +96,7 @@ function SortedAvailableUsers({ availableUsers, addSearch, selectedToAdd, setSel
             <label
                 key={user._id}
                 className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors border-b last:border-b-0 ${
-                isSelected ? "bg-primary/5" : "hover:bg-accent"
+                    isSelected ? "bg-primary/5" : "hover:bg-accent"
                 }`}
             >
                 <Checkbox
@@ -115,7 +113,7 @@ function SortedAvailableUsers({ availableUsers, addSearch, selectedToAdd, setSel
                         })
                         resetMeeting()
                     }}
-                className="shrink-0"
+                    className="shrink-0"
                 />
                 <Avatar className="h-8 w-8 shrink-0">
                 <AvatarImage
@@ -155,6 +153,7 @@ function SortedAvailableUsers({ availableUsers, addSearch, selectedToAdd, setSel
 }
 
 export function MeetingParticipantsDialog({
+    meeting,
     resetMeeting,
     participants,
     addOpen,
@@ -166,13 +165,11 @@ export function MeetingParticipantsDialog({
 
     const participantUserIds = new Set(participants.map((p) => p._id))
     const debouncedSearch = useDebounce(addSearch, 500);
-    const results = useQueries<[
-        UseQueryOptions<{ data: IUser[], pagination: Pagination }>,
-    ]>({
+    const results = useQueries({
         queries: [
             {
                 queryKey: ['users/list', debouncedSearch],
-                queryFn: fetchUsersList({ currentPage: 1, search: debouncedSearch }),
+                queryFn: () => fetchUsersList({ currentPage: 1, search: debouncedSearch }),
                 refetchOnWindowFocus: false,
                 placeholderData: { data: [], pagination: {} as Pagination },
             },
@@ -190,9 +187,10 @@ export function MeetingParticipantsDialog({
     const availableUsers = useMemo(() => {
         return users.filter(
         (u) =>
-            !participantUserIds.has(u._id)
+            !participantUserIds.has(u._id) &&
+            !(meeting.isActive && u.role === 'mock')
         )
-    }, [users, participantUserIds])
+    }, [users, participantUserIds, meeting.isActive])
 
     function Loading() {
         return <div>Loading...</div>;
@@ -217,10 +215,10 @@ export function MeetingParticipantsDialog({
             <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                placeholder="Buscar usuarios..."
-                value={addSearch}
-                onChange={(e) => setAddSearch(e.target.value)}
-                className="pl-9"
+                    placeholder="Buscar usuarios..."
+                    value={addSearch}
+                    onChange={(e) => setAddSearch(e.target.value)}
+                    className="pl-9"
                 />
             </div>
             <div className="h-[300px] overflow-y-auto rounded-lg border">

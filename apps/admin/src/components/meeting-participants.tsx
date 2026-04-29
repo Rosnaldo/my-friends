@@ -35,11 +35,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import type { IUser, IUserParticipant, ParticipantStatus } from "@repo/shared-types"
+import type { IMeeting, IUser, IUserParticipant, ParticipantStatus } from "@repo/shared-types"
 import { MeetingParticipantsDialog } from "./meeting-participants-dialog"
 import _ from "lodash"
 
 interface MeetingParticipantsProps {
+    meeting: IMeeting;
     resetMeeting: () => void
     participants: IUserParticipant[]
     users: IUser[]
@@ -49,6 +50,7 @@ interface MeetingParticipantsProps {
 }
 
 export function MeetingParticipants({
+    meeting,
     resetMeeting,
     participants,
     users,
@@ -122,8 +124,8 @@ export function MeetingParticipants({
                     setAddOpen(true)
                 }}
             >
-            <UserPlus className="h-3.5 w-3.5" />
-            Add Participant
+                <UserPlus className="h-3.5 w-3.5" />
+                Add Participant
             </Button>
         </div>
 
@@ -139,8 +141,8 @@ export function MeetingParticipants({
             />
             </div>
             <Select
-            value={statusFilter}
-            onValueChange={(v) => setStatusFilter(v as "all" | keyof typeof ParticipantStatus)}
+                value={statusFilter}
+                onValueChange={(v) => setStatusFilter(v as "all" | keyof typeof ParticipantStatus)}
             >
             <SelectTrigger className="w-[150px]">
                 <SelectValue />
@@ -169,8 +171,8 @@ export function MeetingParticipants({
                 {filteredParticipants.length === 0 ? (
                 <TableRow>
                     <TableCell
-                    colSpan={5}
-                    className="h-24 text-center text-muted-foreground"
+                        colSpan={5}
+                        className="h-24 text-center text-muted-foreground"
                     >
                     {participants.length === 0
                         ? "No participants yet. Add someone to this meeting."
@@ -263,6 +265,7 @@ export function MeetingParticipants({
 
         {/* Add Participant Dialog */}
         <MeetingParticipantsDialog
+            meeting={meeting}
             addOpen={addOpen}
             onAddParticipants={onAddParticipants}
             participants={participants}
