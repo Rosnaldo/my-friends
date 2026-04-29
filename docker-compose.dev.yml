@@ -23,9 +23,10 @@ services:
   api:
     image: api
     container_name: api
+    pull_policy: build
     build:
       context: .
-      dockerfile: apps/api/dockerfile
+      dockerfile: apps/api/dockerfile.dev
     ports:
       - "5002:5002"
     env_file:
