@@ -10,7 +10,7 @@ services:
     env_file :
       - ./apps/authentication/.env
     volumes:
-      - my_postgres_data:/var/lib/postgresql/data
+      - keycloak_postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"]
       interval: 10s
@@ -69,7 +69,7 @@ services:
     env_file:
       - ./apps/api/.env.local
     volumes:
-      - mongodb_data:/data/db
+      - mongodb:/data/db
     healthcheck:
       test: [ "CMD-SHELL", "mongosh --quiet --authenticationDatabase admin --username $${MONGO_INITDB_ROOT_USERNAME} --password $${MONGO_INITDB_ROOT_PASSWORD} localhost:27017/test --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'" ]
       interval: 30s
@@ -78,5 +78,7 @@ services:
       start_period: 40s 
 
 volumes:
-  my_postgres_data:
-  mongodb_data:
+  keycloak_postgres:
+    name: nanithefuck_keycloak_postgres
+  mongodb:
+    name: nanithefuck_mongodb

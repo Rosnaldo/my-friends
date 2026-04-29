@@ -25,7 +25,7 @@ export const mongooseBootstrap = async ({ testTransaction = false } = {}) => {
         void loadIndexes.fireAndForget();
     }
 
-    if (Properties.nodeEnv !== 'test') {
+    if (['dev', 'local'].includes(Properties.nodeEnv)) {
         await migration.runScripts();
     }
 };
