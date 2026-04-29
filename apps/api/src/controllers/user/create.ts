@@ -37,7 +37,7 @@ export class Create {
             const { mapped } = props;
             const params = this.transform(mapped);
             const builder = new UserBuilder();
-            const user = await builder.build(params).save();
+            const user = await builder.create(params).save();
 
             const kcMain = getKcMain();
             const client = await kcMain.getKcClientCredentials();

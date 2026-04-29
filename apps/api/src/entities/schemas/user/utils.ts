@@ -53,7 +53,7 @@ export type IInitBuilder = {
     _id?: IUser['IParams']['_id'];
     firstName: IUser['IParams']['firstName'];
     lastName: IUser['IParams']['lastName'];
-    email: IUser['IParams']['email'];
+    email?: IUser['IParams']['email'];
     role: IUser['IParams']['role'];
 }
 

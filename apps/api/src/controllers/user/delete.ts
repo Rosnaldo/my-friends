@@ -53,15 +53,17 @@ export class Delete {
             }
             await this.crud.delete(_id);
 
-            const kcMain = getKcMain();
-            const client = await kcMain.getKcClientCredentials();
-            const list = await client.users.find({ email: user.email });
-            if (list.length === 0) {
-                throw new BadRequestException('User not found on keycloak')
+            if (user.role === 'admin' || user.role === 'member') {
+                const kcMain = getKcMain();
+                const client = await kcMain.getKcClientCredentials();
+                const list = await client.users.find({ email: user.email });
+                if (list.length === 0) {
+                    throw new BadRequestException('User not found on keycloak')
+                }
+    
+                const userId = list[0]?.id || '';
+                await client.users.del({ id: userId });
             }
-
-            const userId = list[0]?.id || '';
-            await client.users.del({ id: userId });
             return successData('success');
         } catch (error: unknown) {
             return logError(error, '/users/delete');

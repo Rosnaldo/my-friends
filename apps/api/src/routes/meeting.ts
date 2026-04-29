@@ -16,7 +16,7 @@ export default (app: Application) => {
             if (either.isError) {
                 return res.status(400).send(either);
             }
-            return res.status(200).send(either.data);
+            return res.status(200).send(either);
         }
     );
     app.get(

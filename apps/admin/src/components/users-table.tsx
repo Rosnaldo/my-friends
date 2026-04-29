@@ -34,40 +34,35 @@ import { UserFormDialog } from "@/components/user-form-dialog"
 import { DeleteUserDialog } from "@/components/delete-user-dialog"
 import type { IUser, Pagination, UserRole } from "@repo/shared-types"
 import { apiBack } from "@/api/backend"
-import { useQueries, type UseQueryOptions } from "@tanstack/react-query"
+import { useQueries } from "@tanstack/react-query"
 import { ApiError } from "@/error/api"
 import { useDebounce } from "@/hooks/use-debounce"
 import { checkErrorByField } from "@/utils/check_error_by_field"
 import { mytoast } from "./toast"
+import { myfetch } from "@/utils/utils"
 
 const PAGE_SIZE = 30
 
-const fetchUserCount = async () => {
-    const res = await apiBack.get(
-        "/users/count"
-    )
-    if (res.data.isError) {
-        throw new ApiError(res.data.message);
-    }
+async function fetchUserCount() {
+    return await myfetch<{ admins: number; members: number; }>(
+        () => apiBack.get(
+            "/users/count"
+        )
+    );
+}
 
-    return res.data;
-};
-
-const fetchUsersList = ({ currentPage, search }: { currentPage: number, search: string }) => async () => {
-    const res = await apiBack.get(
-        "/users/list", {
-            params: {
-                page: currentPage,
-                search,
+async function fetchUsersList({ currentPage, search }: { currentPage: number, search: string }) {
+    return await myfetch<{ data: IUser[], pagination: Pagination }>(
+        () => apiBack.get(
+            "/users/list", {
+                params: {
+                    page: currentPage,
+                    search,
+                }
             }
-        }
-    )
-    if (res.data.isError) {
-        throw new ApiError(res.data.message);
-    }
-
-    return res.data;
-};
+        )
+    );
+}
 
 export function UsersTable() {
     const [search, setSearch] = useState("")
@@ -75,13 +70,10 @@ export function UsersTable() {
     const [currentPage, setCurrentPage] = useState(1)
     const debouncedSearch = useDebounce(search, 500);
 
-    const results = useQueries<[
-        UseQueryOptions<{ admins: number; members: number; }>,
-        UseQueryOptions<{ data: IUser[], pagination: Pagination }>,
-    ]>({
+    const results = useQueries({
         queries: [
-            { queryKey: ['users/count'], queryFn: fetchUserCount },
-            { queryKey: ['users/list', currentPage, debouncedSearch], queryFn: fetchUsersList({ currentPage, search: debouncedSearch }) },
+            { queryKey: ['users/count'], queryFn: () => fetchUserCount() },
+            { queryKey: ['users/list', currentPage, debouncedSearch], queryFn: () => fetchUsersList({ currentPage, search: debouncedSearch }) },
         ],
     });
 
@@ -96,6 +88,7 @@ export function UsersTable() {
     const [deletingUser, setDeletingUser] = useState<IUser | null>(null)
 
     const usersListQuery = results[1];
+    const counts = results[0].data;
     const data = results[1].data;
     const users = data?.data ?? [];
     const pagination = data?.pagination;
@@ -108,8 +101,6 @@ export function UsersTable() {
 
     // Stats
     const totalCount = pagination?.totalRecords
-    const adminCount = users.filter((u) => u.role === "admin").length
-    const memberCount = users.filter((u) => u.role === "member").length
 
     async function handleDeleteUser() {
         if (!deletingUser) return
@@ -211,7 +202,7 @@ export function UsersTable() {
             </div>
             <div>
                 <p className="text-sm text-muted-foreground">Admins</p>
-                <p className="text-2xl font-semibold text-card-foreground">{adminCount}</p>
+                <p className="text-2xl font-semibold text-card-foreground">{counts?.admins}</p>
             </div>
             </div>
             <div className="flex items-center gap-3 rounded-lg border bg-card p-4">
@@ -220,7 +211,7 @@ export function UsersTable() {
             </div>
             <div>
                 <p className="text-sm text-muted-foreground">Members</p>
-                <p className="text-2xl font-semibold text-card-foreground">{memberCount}</p>
+                <p className="text-2xl font-semibold text-card-foreground">{counts?.members}</p>
             </div>
             </div>
         </div>
