@@ -1,9 +1,6 @@
-import { useIsMobile } from "@/hooks/useIsMobile";
 import { Sacura } from "./sacura";
 
 export function BottomBgSvg() {
-    const isMobile = useIsMobile()
-
     return (
         <div id="bottom-bg-svg" className="absolute bottom-0 left-0 w-full h-[135vh] z-0 pointer-events-none overflow-hidden">
             <Sacura />
