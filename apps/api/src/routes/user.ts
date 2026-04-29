@@ -42,7 +42,7 @@ export default (app: Application) => {
         '/users/participants',
         GetKeycloakUser,
         GetUser,
-        authorizeMiddleware([UserRole.admin]),
+        authorizeMiddleware([UserRole.admin, UserRole.member]),
         async (req, res) => {
             const { user } = req;
             const controller = new UserController();

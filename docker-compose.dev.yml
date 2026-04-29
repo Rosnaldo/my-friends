@@ -106,16 +106,6 @@ services:
       - frontend
       - backend
 
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: mailhog
-    ports:
-      - "1025:1025"   # SMTP
-      - "8025:8025"   # UI
-    restart: unless-stopped
-    networks:
-      - backend
-
   mongo:
     image: mongo:8.0.14-noble
     pull_policy: always
@@ -137,9 +127,9 @@ services:
 
 volumes:
   keycloak_postgres:
-    name: nanithefuck_keycloak_postgres
+    name: nanithefuck_dev_keycloak_postgres
   mongodb:
-    name: nanithefuck_mongodb
+    name: nanithefuck_dev_mongodb
   web_build:
     name: nanithefuck_web_build
   s3_cache:
