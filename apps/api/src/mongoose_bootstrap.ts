@@ -5,7 +5,13 @@ import { LoadIndexes } from "#indexes/load_indexes";
 import { Migration } from "#migrations/migration";
 import Properties from "#properties";
 
-export const mongooseBootstrap = async ({ testTransaction = false } = {}) => {
+type IParams = { testTransaction?: boolean, e2e?: () => Promise<void> };
+
+const initParams = { e2e: async () => {} };
+
+export const mongooseBootstrap = async (
+    { testTransaction = false, e2e }: IParams = initParams,
+) => {
     const concistentEnvs = ['prod', 'dev', 'test'];
 
     const migration = new Migration();
@@ -27,5 +33,9 @@ export const mongooseBootstrap = async ({ testTransaction = false } = {}) => {
 
     if (['dev', 'local'].includes(Properties.nodeEnv)) {
         await migration.runScripts();
+    }
+
+    if (['e2e'].includes(Properties.nodeEnv)) {
+        await e2e?.();
     }
 };

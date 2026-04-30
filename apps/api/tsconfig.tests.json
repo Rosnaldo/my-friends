@@ -8,7 +8,7 @@
     "declarationMap": false,
     "types": ["jest", "node"]
   },
-  "include": ["src", "tests"],
+  "include": ["src", "tests", "cypress"],
   "exclude": [
     "node_modules",
     "build",

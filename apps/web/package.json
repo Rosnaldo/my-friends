@@ -8,7 +8,10 @@
     "build-dev": "tsc -b && vite build --mode dev",
     "build": "tsc -b && vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview --host 0.0.0.0 --port 5173"
+    "preview": "vite preview --host 0.0.0.0 --port 5173",
+    "e2e:local": "vite --port 5173 --mode e2e",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
@@ -20,6 +23,7 @@
     "@repo/shared-types": "*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.12",
+    "@types/jest": "^30.0.0",
     "axios": "^1.13.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -40,6 +44,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "cypress": "^15.14.2",
     "eslint": "^9.39.3",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",

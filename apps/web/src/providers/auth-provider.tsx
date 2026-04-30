@@ -12,20 +12,32 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>(null!);
 
+const isE2E = import.meta.env.VITE_E2E === 'true';
+
+const e2eMockContext: AuthContextType = {
+    isAuthenticated: true,
+    loggedUser: { email: 'andreytsuzuki@gmail.com', fullname: 'Andrey Tsuzuki' },
+    login: () => {},
+    logout: () => {},
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const initialized = useRef(false); // 🔐 proteção
+    if (isE2E) {
+        return <AuthContext.Provider value={e2eMockContext}>{children}</AuthContext.Provider>;
+    }
+
+    return <AuthProviderReal>{children}</AuthProviderReal>;
+}
+
+function AuthProviderReal({ children }: { children: React.ReactNode }) {
+    const initialized = useRef(false);
     const [ready, setReady] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loggedUser, setLoggedUser] = useState<User>({ email: '', fullname: '' });
 
     useEffect(() => {
-        if (initialized.current) return; // ⛔ evita múltiplos init
+        if (initialized.current) return;
         initialized.current = true;
-
-        // Clear any old cached tokens and session storage
-        // keycloak.clearToken?.(); // clear token if previously set
-        // sessionStorage.clear();   // clear session storage
-        // localStorage.clear();     // clear local storage if used
 
         keycloak
         .init({

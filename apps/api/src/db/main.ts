@@ -33,7 +33,8 @@ export class MainConnection {
     };
 
     private readonly createConnection = async ({ testTransaction = false }: Props): Promise<Connection> => {
-        if (Properties.nodeEnv === 'test' && testTransaction) {
+        const testEnv = ['test', 'e2e'];
+        if (testEnv.includes(Properties.nodeEnv) && testTransaction) {
             this.replSet = await MongoMemoryReplSet.create({
                 replSet: { count: 1 }, // mínimo para transactions
             });
@@ -41,7 +42,7 @@ export class MainConnection {
             const uri = this.replSet.getUri();
             return mongoose.createConnection(uri);
         }
-        if (Properties.nodeEnv === 'test') {
+        if (testEnv.includes(Properties.nodeEnv)) {
             this.mongoServer = await MongoMemoryServer.create();
             const uri = this.mongoServer.getUri();
             return mongoose.createConnection(uri, { maxPoolSize: 5 });
