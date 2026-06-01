@@ -20,9 +20,11 @@ const isObjectWithFields = (value: any): boolean => {
     return typeof value === 'object' && !_.isNil(value) && !Array.isArray(value);;
 };
 
-export const successData = <T>(data: T, message: string = 'sucesso'): IsSuccess<T> => {
+export const successData = <T extends object>(data: T, message: string = 'sucesso'): IsSuccess<T> => {
+    if (!isObjectWithFields(data)) throw new Error('data is not an object');
+
     return {
-        data: (isObjectWithFields(data) ? data : ({} as T)),
+        data,
         message,
         status: 200,
         isError: false
